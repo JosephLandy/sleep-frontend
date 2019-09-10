@@ -1,5 +1,5 @@
 import React, { SyntheticEvent, useState } from 'react';
-import { Grid } from '@material-ui/core';
+import { Grid, Button, DialogTitle, DialogActions } from '@material-ui/core';
 import Dialog from '@material-ui/core/Dialog';
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
 import { days, IWeekRecord, WeekDay } from '../model';
@@ -16,16 +16,19 @@ const useStyles = makeStyles((theme: Theme) =>
 
 
 type WeekProps = {
-    week: IWeekRecord
+    weekinput: IWeekRecord
 };
 
-export default function ({week}: WeekProps) {
+export default function ({weekinput}: WeekProps) {
     const classes = useStyles();
     const [open, setOpen] = useState(false);
+    // I think because I have to keep state somewhere right now, I'm going to
+    // just store the props into state. Apparently it's ok to use props
+    // to initialize state. Sort of. Maybe. 
+    const [week, setWeek] = useState(weekinput);
 
-    function handleNightEditorOpen(day: WeekDay, e: SyntheticEvent) {
-        e.preventDefault();
-
+    function closeEditor() {
+        setOpen(false);
     }
 
     return (
@@ -38,9 +41,19 @@ export default function ({week}: WeekProps) {
                     return <NightView key={day} night={week.nights[day]} />
                 })}
             </Grid>
-            <Dialog open={open}>
+            <Button onClick={() => setOpen(true)}>Open dialog</Button>
 
+            <Dialog open={open} onClose={closeEditor}>
+                <DialogTitle>
+                    dialogue
+                </DialogTitle>
+                <DialogActions>
+                    <Button onClick={() => closeEditor()}>Cancel</Button>
+                    <Button onClick={() => closeEditor()}>Submit</Button>
+                </DialogActions>
             </Dialog>
         </div>
     );
 }
+
+
