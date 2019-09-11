@@ -6,7 +6,7 @@ import LuxonUtils from '@date-io/luxon';
 import WeekView from './components/WeekView';
 import './App.css';
 
-import {WeekDay, IWeekRecord} from './model';
+// import {WeekDay, IWeekRecord} from './model';
 import {sampleWeek} from './stories/WeekView.stories';
 
 import theme from './theme';

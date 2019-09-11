@@ -1,8 +1,8 @@
-import React, { SyntheticEvent, useState } from 'react';
+import React, { useState } from 'react';
 import { Grid, Button, DialogTitle, DialogActions } from '@material-ui/core';
 import Dialog from '@material-ui/core/Dialog';
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
-import { days, IWeekRecord, WeekDay } from '../model';
+import { days, IWeekRecord, } from '../model';
 import NightView from './NightView';
 import {DateTime} from 'luxon';
 
@@ -20,7 +20,8 @@ type WeekProps = {
 };
 
 export default function ({weekinput}: WeekProps) {
-    const classes = useStyles();
+    // const classes = useStyles();
+
     const [open, setOpen] = useState(false);
     // I think because I have to keep state somewhere right now, I'm going to
     // just store the props into state. Apparently it's ok to use props
@@ -55,5 +56,3 @@ export default function ({weekinput}: WeekProps) {
         </div>
     );
 }
-
-

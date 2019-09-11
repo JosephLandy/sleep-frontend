@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { INightRecord } from '../model';
-import {TimePicker} from '@material-ui/pickers';
+
 import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
 import { DialogActions, Button, DialogContent, DialogContentText, DialogTitle, InputLabel, MenuItem,Grid,
@@ -8,19 +8,26 @@ import { DialogActions, Button, DialogContent, DialogContentText, DialogTitle, I
 import { DateTime, } from 'luxon';
 
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
-import { green, orange, blue, red, } from '@material-ui/core/colors';
+import { green, orange, red } from '@material-ui/core/colors';
+
+import RatingSelect from './RatingSelect';
+import TimePropertySelector from './TimePropertySelector';
+
+import MedsAlcoholEditor, {MedsAlcoholHandler} from './MedsAlcoholEditor';
+
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
-        ratingCell: {
+        ratingCell1: {
             backgroundColor: green[200],
         },
-        containerGrid: {
+        ratingCell2: {
             backgroundColor: orange[200],
         },
-        ratingControl: {
-            minWidth: 110,
-        }
+        containerGrid: {
+            flexGrow: 1,
+            backgroundColor: red[200],
+        },
     })
 );
 
@@ -35,6 +42,10 @@ export default function NightEditor({ night, closeEditor, submit }: NightEditorP
     // for the time being, this is a suitable deepcopy. Change when it gets 
     // more complicated.
     const [edits, setEdits] = useState<INightRecord>({ ...night });
+
+    const [drugsEdits, setDrugsEdits] = useState([...night.medsAndAlcohol]);
+
+
     const classes = useStyles();
 
     const handleTimeChange = (t: DateTime | null, property: string) => {
@@ -49,38 +60,22 @@ export default function NightEditor({ night, closeEditor, submit }: NightEditorP
                 [property]: undefined,
             }));
         }
-    }
+    };
 
-    const handleRatingChange: RatingChangeHandler = (e) => {
+    const handleRatingChange = (e: any) => {
         setEdits(oldEdits => ({
             ...oldEdits,
             [e.target.name as string]: e.target.value,
         }));
-    }
-
-    type TimeSelectorProps = {
-        label: string;
-        property: string;
-        value: DateTime | null | undefined;
     };
 
-    function TimePropertySelector({label, property, value}: TimeSelectorProps) {
-        return (
-            <TimePicker
-                value={value ? value : null}
-                id={`${night.day}-${property}-picker`}
-                clearable
-                label={label}
-                // mask="__:__"
-                // placeholder="8:00 AM"
-                onChange={t => {
-                    handleTimeChange(t, property);
-                }}
-            />
-        );
+    const handleDrugsChange: MedsAlcoholHandler = (i, prop, value) => {
+      const newDrugs = [...drugsEdits];
+      newDrugs[i] = {...newDrugs[i], [prop]: value};
+      setDrugsEdits(newDrugs);
+
+      console.log('editing drugs')
     }
-    
-    
 
     return (
         <form onKeyPress={(event) => {
@@ -97,38 +92,43 @@ export default function NightEditor({ night, closeEditor, submit }: NightEditorP
                 <DialogContentText>
                     {night.dateAwake.toLocaleString()}
                 </DialogContentText>
-                <Grid className={classes.containerGrid} container spacing={2}>
+                <Grid container spacing={2} direction="row">
                 {/* <Grid container spacing={0} direction="column"> */}
-
-                    <Grid item xs={6}>                    
-                    <TimePropertySelector label="Went to bed at" property="bedTime" value={edits.bedTime} />
+                    <Grid item xs={6}>
+                        <TimePropertySelector label="Went to bed at" property="bedTime" value={edits.bedTime}
+                        handleChange={handleTimeChange} />
+                    </Grid>
+                    <Grid item xs={6}>
+                        <TimePropertySelector label="Fell asleep at" property="fellAsleepAt" value={edits.fellAsleepAt}
+                        handleChange={handleTimeChange} />
+                    </Grid>
+                    <Grid item xs={6}>
+                        <TimePropertySelector label="Woke up at" property="wokeUp" value={edits.wokeUp}
+                        handleChange={handleTimeChange} />
+                    </Grid>
+                    <Grid item xs={6}>
+                        <TimePropertySelector label="got out of bed at" property="gotUp" value={edits.gotUp}
+                        handleChange={handleTimeChange} />
                     </Grid>
 
-                    <Grid item xs={6}>    
-                    <TimePropertySelector label="Fell asleep at" property="fellAsleepAt" value={edits.fellAsleepAt} />
-                    </Grid>
+                    <Grid item xs={12} className={classes.containerGrid} container spacing={3} direction="row">
+                        <Grid item className={classes.ratingCell1} xs={4}>
+                            <RatingSelect value={edits.restedRating}
+                                label="Rested rating"
+                                name="restedRating"
+                                handleChange={handleRatingChange}
+                            />
+                        </Grid>
 
-                    <Grid item xs={6}>                    
-                    <TimePropertySelector label="Woke up at" property="wokeUp" value={edits.wokeUp} />
+                        <Grid item className={classes.ratingCell2} xs={4}>
+                            <RatingSelect value={edits.sleepQuality}
+                                label="Sleep quality"
+                                name="sleepQuality"
+                                handleChange={handleRatingChange}
+                            />
+                        </Grid>
                     </Grid>
-
-                    <Grid item className={classes.ratingCell} xs={6}>
-                        <RatingSelect value={edits.restedRating}
-                            label="Rested rating"
-                            name="restedRating"
-                            handleChange={handleRatingChange}
-                        />
-                    </Grid>
-                    
-                    <Grid item className={classes.ratingCell} xs={6}>
-                        <RatingSelect value={edits.sleepQuality}
-                            label="Sleep quality"
-                            name="sleepQuality"
-                            handleChange={handleRatingChange}
-                        />
-                    </Grid>
-
-                    
+                    <MedsAlcoholEditor drugs={drugsEdits} drugEdited={handleDrugsChange} />
                 </Grid>   
             </DialogContent>
             <DialogActions>
@@ -140,65 +140,5 @@ export default function NightEditor({ night, closeEditor, submit }: NightEditorP
                 </Button>
             </DialogActions>
         </form>
-    );
-}
-
-type RatingChangeHandler = React.ChangeEventHandler<{
-    name?: string | undefined;
-    value: unknown;
-}>;
-
-type RatingSelectProps = {
-    value: string;
-    label: string;
-    name: string;
-    handleChange: RatingChangeHandler;
-    
-}
-
-function RatingSelect({value, name, label, handleChange}: RatingSelectProps) {
-    const classes = useStyles();
-    return (
-        <FormControl className={classes.ratingControl}>
-            <InputLabel htmlFor={`${name}-rating`}>{label}</InputLabel>
-            <Select
-                value={value}
-                onChange={handleChange}
-                inputProps={{
-                    name,
-                    id: `${name}-rating`,
-                }}
-            >
-                <MenuItem value="">None</MenuItem>
-                <MenuItem value={1}>1</MenuItem>
-                <MenuItem value={2}>2</MenuItem>
-                <MenuItem value={3}>3</MenuItem>
-                <MenuItem value={4}>4</MenuItem>
-                <MenuItem value={5}>5</MenuItem>
-            </Select>
-        </FormControl>
-    );
-}
-
-type TimeSelectorProps2 = {
-    label: string;
-    property: string;
-    value: DateTime | null | undefined;
-};
-
-function TimePropertySelector2({ value, label, property,  }: TimeSelectorProps2) {
-    return (
-        <TimePicker
-            value={value ? value : null}
-            // id={`${night.day}-${property}-picker`}
-            id={`${property}-picker`}
-            clearable
-            label={label}
-            // mask="__:__"
-            // placeholder="8:00 AM"
-            onChange={t => {
-                handleTimeChange(t, property);
-            }}
-        />
     );
 }

@@ -37,32 +37,16 @@ export interface INightRecord {
     gotUp?: DateTime;
     restedRating: string;
     sleepQuality: string;
-    medsAndAlcohol: Array<{
-        substance: string;
-        time: DateTime;
-        // quantity should be optional. 
-        quantity?: number;
-    }>;
+    medsAndAlcohol: Array<DrugRecord>;
 }
 
-// this probably can't go in redux state, if I use redux. 
-// arguably worse to use anywhere. But I may have some kind of
-// complicated changes that get made to this. Of course, 
-// this can't work with vanilla react state either. Has to be 
-// changed immutably. 
-// class NightRecord implements INightRecord {
-//     fellAsleepAt?: DateTime | undefined;
-//     day: WeekDay;
-//     dateAwake: DateTime;
-//     edited: boolean = false;
-//     bedTime?: DateTime | undefined;
-//     constructor(day: WeekDay, dateAwake: DateTime) {
-//         this.day = day;
-//         this.dateAwake = dateAwake;
-//         this.interuptions = [];
+export interface DrugRecord {
+    substance: string;
+    time: DateTime;
+    // quantity should be optional
+    quantity?: number;
+}
 
-//     }
-// }
 
 export interface IWeekRecord {
     // date of start of the week. 
