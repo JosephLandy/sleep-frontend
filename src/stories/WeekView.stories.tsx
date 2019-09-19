@@ -1,7 +1,7 @@
 import React from 'react';
 import { storiesOf } from '@storybook/react';
 import { WeekDay, populateWeek, INightRecord } from '../model';
-// import CssBaseline from '@material-ui/core/CssBaseline';
+// import CssBaseline froTim '@material-ui/core/CssBaseline';
 import WeekView from '../components/WeekView';
 import { DateTime, Duration } from 'luxon';
 import { decorator } from '../App';
@@ -11,6 +11,7 @@ const unixtimestamp = 156002828
 // const jsdate = new Date(unixtimestamp * 1000);
 const luxonDate = DateTime.fromMillis(unixtimestamp * 1000);
 export const sampleWeek = populateWeek(luxonDate);
+
 
 const monday = sampleWeek.nights[WeekDay.monday];
 export const completeNight: INightRecord = {
@@ -51,6 +52,8 @@ export const completeNight: INightRecord = {
 }
 
 sampleWeek.nights[WeekDay.monday] = completeNight;
+
+console.log(JSON.stringify(sampleWeek));
 
 storiesOf('WeekView', module)
     .addDecorator(decorator)

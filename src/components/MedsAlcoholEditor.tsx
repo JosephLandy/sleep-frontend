@@ -8,27 +8,53 @@ import {
   ExpansionPanel,
   ExpansionPanelSummary,
   ExpansionPanelDetails,
-  TextField
+  TextField,
+  Fab,
+  IconButton
 } from '@material-ui/core';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
+import DeleteIcon from '@material-ui/icons/Delete';
+import AddIcon from '@material-ui/icons/Add';
+
+
 import { DateTime } from 'luxon';
 
 import TimePropertySelector from './TimePropertySelector';
-
 import { DrugRecord } from '../model';
 
 
 export type MedsAlcoholHandler = (index: number, property: string, value: string | DateTime | number | null) => void;
 
+
 type Props = {
   drugs: Array<DrugRecord>;
-  drugEdited: MedsAlcoholHandler;
+  // drugEdited: MedsAlcoholHandler;
+  drugsChanged: (drugs: Array<DrugRecord>) => void;
 }
 
 // this could be a higher order component or something for
 // different list type editors (such as interruptions). Possibly a typescript generic? 
 
-export default function MedsAlcoholEditor({ drugs, drugEdited }: Props) {
+export default function MedsAlcoholEditor({ drugs, drugsChanged, }: Props) {
+
+  const drugEdited: MedsAlcoholHandler = (i, prop, value) => {
+    const newDrugs = [...drugs];
+    newDrugs[i] = { ...newDrugs[i], [prop]: value };
+    drugsChanged(newDrugs);
+  }
+
+  function drugAdded() {
+    drugsChanged([...drugs, {
+      substance: '',
+      time: null,
+    }]);
+  }
+
+  function drugDeleted(i: number) {
+    const newDrugs = [...drugs.slice(0, i), ...drugs.slice((i + 1))];
+    drugsChanged(newDrugs);
+  }
+
   return (
     <ExpansionPanel onBlur={(e) => {
       // maybe submit the update to the containing component when this loses focus.
@@ -52,62 +78,47 @@ export default function MedsAlcoholEditor({ drugs, drugEdited }: Props) {
             {drugs.map(({ substance, quantity, time }: DrugRecord, index) => (
               <TableRow key={index}>
                 <TableCell>
-                  <TextField value={substance} onChange={e => {
-                    drugEdited(index, "substance", e.target.value);
-                  }} />
+                  {/* uncontrolled component. For this to work properly, the submit button
+                  on the NightEditor must handle it's event after the onBlur event here. Not sure if it is or not. */}
+                  <TextField defaultValue={substance} inputProps={{onBlur: (event) => {
+                    drugEdited(index, "substance", event.target.value);
+                  }}} />
                 </TableCell>
                 <TableCell>
-                  {/* ok, so if there is no value  */}
-                  <TextField value={quantity} onChange={e => {
-                    drugEdited(index, "quantity", e.target.value);
+                  {/* ok, so if there is no value */}
+                  <TextField defaultValue={quantity} inputProps={{
+                    onBlur: (e) => {
+                      // need to make sure this is a number here. And set it to undefined if it's unitless.
+                      drugEdited(index, "quantity", e.target.value);
+                    }
                   }} />
                 </TableCell>
                 <TableCell>
                   <TimePropertySelector value={time} label="Time" property="time" handleChange={(t, property) => {
-                    // if time is changed, the med list should be sorted into chronological order. 
+                    // if time is changed, the med list should be sorted into chronological order.
                     drugEdited(index, property, t);
                   }}/>
                 </TableCell>
+                <TableCell>
+                  <IconButton onClick={e => {
+                    drugDeleted(index);
+                  }}>
+                    <DeleteIcon />
+                  </IconButton>
+                </TableCell>
               </TableRow>
             ))}
-          </TableBody>
-        </Table>
-      </ExpansionPanelDetails>
-    </ExpansionPanel>
-  );
-}
-
-
-export function MedsAlcoholDisplay({ drugs }: Props) {
-  return (
-    <ExpansionPanel>
-      <ExpansionPanelSummary
-        expandIcon={<ExpandMoreIcon />}>
-        Medication and Alcohol
-            </ExpansionPanelSummary>
-      <ExpansionPanelDetails>
-        <Table>
-          <TableHead>
-            <TableRow>
-              <TableCell>Drug</TableCell>
-              <TableCell>Quantity</TableCell>
-              <TableCell>Time</TableCell>
+            <TableRow >
+              <TableCell />
+              <TableCell align="center">
+                <Fab onClick={e => {
+                  drugAdded();
+                }}>
+                  <AddIcon/>
+                </Fab>
+              </TableCell>
+              <TableCell />
             </TableRow>
-          </TableHead>
-          <TableBody>
-            {drugs.map((drug, index) => (
-              <TableRow key={index}>
-                <TableCell>
-                  {drug.substance}
-                </TableCell>
-                <TableCell>
-                  {drug.quantity}
-                </TableCell>
-                <TableCell>
-                  {drug.time.toLocaleString()}
-                </TableCell>
-              </TableRow>
-            ))}
           </TableBody>
         </Table>
       </ExpansionPanelDetails>

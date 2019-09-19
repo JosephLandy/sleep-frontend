@@ -32,5 +32,6 @@ storiesOf('NightEditor', module).addDecorator(storyFn => (
 )).add('sample', () => (
     <NightEditor {...props} />
 )).add('entries complete', () => (
-    <NightEditor {...props} night={completeNight} />
+    <NightEditor {...{...props, night: completeNight}} />
+  // <NightEditor {...{ ...props, night: completeNight }} night={completeNight} />
 ));

@@ -8,13 +8,17 @@ import {sampleWeek, completeNight} from './WeekView.stories';
 
 import {decorator} from '../App';
 
+import { action } from '@storybook/addon-actions';
+
+const nightUpdatedAction = action('nightUpdated');
+
 
 storiesOf('NightView', module)
-    .addDecorator(decorator)
-    .add('sample', () => (
-        <NightView night={sampleWeek.nights[WeekDay.friday]} />
-    )).add('not edited', () => (
-        <NightView night={{...sampleWeek.nights[WeekDay.friday], edited: false}} />
-    )).add('complete', () => (
-        <NightView night={completeNight} />
-    ));
+  .addDecorator(decorator)
+  .add('sample', () => (
+    <NightView night={sampleWeek.nights[WeekDay.friday]} nightUpdated={nightUpdatedAction}/>
+  )).add('not edited', () => (
+    <NightView night={{ ...sampleWeek.nights[WeekDay.friday], edited: false }} nightUpdated={nightUpdatedAction} />
+  )).add('complete', () => (
+    <NightView night={completeNight} nightUpdated={nightUpdatedAction}/>
+  ));
