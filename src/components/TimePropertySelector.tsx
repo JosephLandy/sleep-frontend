@@ -2,6 +2,7 @@ import React from 'react';
 import { TimePicker } from '@material-ui/pickers';
 import { DateTime, } from 'luxon';
 
+// handleChange should accept undefined. 
 type TimeSelectorProps = {
     label: string;
     property: string;

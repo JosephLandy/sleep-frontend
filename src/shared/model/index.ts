@@ -1,51 +1,31 @@
 import { DateTime, Duration } from 'luxon';
-import { object } from 'prop-types';
+import {cloneDeepWith} from 'lodash';
+import { INightRecord, NightRecord} from './NightRecord';
+// very silly, but I'm doing it. I like the underscore. 
+const _ = { cloneDeepWith };
+// export * from './NightRecord';
+export * from './NightRecord';
 
 export enum WeekDay {
-  sunday = "Sunday",
+  
   monday = "Monday",
   tuesday = "Tuesday",
   wednesday = "Wednesday",
   thursday = "Thursday",
   friday = "Friday",
-  saturday = "Saturday"
+  saturday = "Saturday",
+  sunday = "Sunday",
 }
 
 export const days = [
-  WeekDay.sunday,
   WeekDay.monday,
   WeekDay.tuesday,
   WeekDay.wednesday,
   WeekDay.thursday,
   WeekDay.friday,
-  WeekDay.saturday
+  WeekDay.saturday,
+  WeekDay.sunday,
 ];
-
-export interface INightRecord {
-  edited: boolean;
-  day: WeekDay;
-  // this must be at like midnight on the day. This is just for the date.
-  // time is separate. 
-  dateAwake: DateTime;
-  bedTime?: DateTime | null;
-  fellAsleepAt?: DateTime | null;
-  interuptions: Array<{
-    duration: Duration;
-    notes: string;
-  }>;
-  wokeUp?: DateTime;
-  gotUp?: DateTime;
-  restedRating: string;
-  sleepQuality: string;
-  medsAndAlcohol: Array<DrugRecord>;
-}
-
-export interface DrugRecord {
-  substance: string;
-  time: DateTime | null;
-  // quantity should be optional
-  quantity?: number;
-}
 
 
 export interface IWeekRecord {
@@ -71,7 +51,7 @@ export function populateWeek(dayInWeek: DateTime): IWeekRecord {
   };
   for (let current = weekOf; current < weekOf.endOf('week'); current = current.plus({ days: 1 })) {
     let day = days[current.weekday - 1];
-    week.nights[day] = {
+    week.nights[day] = new NightRecord ({
       day,
       dateAwake: current,
       edited: false,
@@ -79,17 +59,7 @@ export function populateWeek(dayInWeek: DateTime): IWeekRecord {
       restedRating: '',
       sleepQuality: '',
       medsAndAlcohol: [],
-    };
+    });
   }
   return week;
-}
-
-interface DTConverter<T> {
-  (dt: DateTime): T;
-}
-export function convertDateTimes<T>(obj: object, converter: DTConverter<T>): object {
-  // base case. Is DateTime. 
-  if (obj) {
-    
-  }
 }

@@ -1,6 +1,6 @@
 import React from 'react';
 import { FormControl, Select, MenuItem } from '@material-ui/core';
-import { WeekDay } from '../model';
+import { WeekDay } from '../shared/model';
 
 type Props = {
     value: WeekDay

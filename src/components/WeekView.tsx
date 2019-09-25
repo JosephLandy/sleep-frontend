@@ -3,11 +3,12 @@ import { Grid, Button } from '@material-ui/core';
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
 import { DateTime } from 'luxon';
 
-import { days, IWeekRecord, INightRecord, } from '../model';
+import { days, IWeekRecord, INightRecord} from '../shared/model';
 import NightView from './NightView';
 // I can literally load an svg as a react component.
 //https://create-react-app.dev/docs/adding-images-fonts-and-files
 import { ReactComponent as Triangle } from '../TriangleArrow-Left.svg';
+import { completeNight } from '../shared/sampledata';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -54,6 +55,8 @@ export default function ({ weekinput }: WeekProps) {
   function onUpdateNight(night: INightRecord) {
     const updatedWeek = { ...week };
     updatedWeek.nights[night.day] = night;
+    putNight(night);
+    // send the new/updated night to the api.
     setWeek(updatedWeek);
   }
 
@@ -76,22 +79,94 @@ export default function ({ weekinput }: WeekProps) {
       <Button onClick={e => {
         // I need to add a proxy for api requests from storybook separately from the 
         // react one. It looks a bit more complicated, but not too bad. 
-        fetch('/api/priorsubstances').then(resp => resp.json()).then(myjson => {
-          console.log(JSON.stringify(myjson));
-        })
+        getPriorSubstances();
       }}>
-        fetch button
+        prior substances
       </Button>
       <Button onClick={e => {
-        // I need to add a proxy for api requests from storybook separately from the 
-        // react one. It looks a bit more complicated, but not too bad. 
-        fetch('/api/hello').then(resp => resp.json()).then(myjson => {
-          console.log(JSON.stringify(myjson));
-        })
+        // I had to add a proxy for api requests from storybook separately from the 
+        // react one.
+        getHell0();
       }}>
-        fetch button 2
+        hello
       </Button>
+      <Button onClick={e => {
+        getNight();
+      }}>
+        night
+      </Button>
+      <Button onClick={e => {
+        putNight(completeNight);
+      }}>
+        put night
+      </Button>
+      <Button onClick={e => {
+        clearDatabase();
+      }}>
+        clear database
+      </Button>
+      <Button onClick={e => {
+        getNight2(completeNight.dateAwake);
 
+      }}>
+        get complete night. 
+      </Button>
     </div>
   );
+}
+
+function putNight(night: INightRecord) {
+  // console.log(JSON.stringify(night));
+  fetch('/api/night', {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(night),
+  }).then((response) => {
+    console.log('posted night');
+    console.log(response.statusText);
+  })
+  .catch(error => {
+    console.log(`error occured ${error}`);
+  });
+}
+
+function getNight() {
+  fetch('/api/night').then(resp => {
+    console.log(resp.status)
+    return resp.text();
+  }).then(val => { console.log(val) });
+}
+
+function getNight2(night: DateTime | string) {
+  let nightstr: string;
+  if (typeof night === 'string') {
+    nightstr = night;
+  } else {
+    nightstr = (night as DateTime).toISO();
+  }
+  fetch(`/api/nights/${nightstr}`).then(resp => {
+    console.log(resp.status);
+    return resp.text();
+  }).then(val => { console.log(val) });
+}
+
+function getHell0() {
+  fetch('/api/hello').then(resp => {
+    console.log(resp.status)
+    return resp.text();
+  }).then(val => { console.log(val) });
+}
+
+function getPriorSubstances() {
+  fetch('/api/priorsubstances').then(resp => resp.json()).then(myjson => {
+    console.log(JSON.stringify(myjson));
+  });
+}
+
+function clearDatabase() {
+  fetch('/api/clear').then(resp => {
+    console.log(resp.statusText);
+  })
 }

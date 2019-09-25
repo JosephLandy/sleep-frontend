@@ -13,7 +13,7 @@ import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 
 import { DateTime } from 'luxon';
 
-import { DrugRecord } from '../model';
+import { DrugRecord } from '../shared/model';
 
 
 

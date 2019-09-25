@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Grid, Paper, Box, Fab, Typography, Dialog, Divider, } from '@material-ui/core';
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
-import { WeekDay, days, INightRecord } from '../model';
+import { WeekDay, days, INightRecord } from '../shared/model';
 import AddIcon from '@material-ui/icons/Add';
 import NightEditor from './NightEditor';
 import TextField from '@material-ui/core/TextField';

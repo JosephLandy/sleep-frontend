@@ -20,7 +20,7 @@ import AddIcon from '@material-ui/icons/Add';
 import { DateTime } from 'luxon';
 
 import TimePropertySelector from './TimePropertySelector';
-import { DrugRecord } from '../model';
+import { DrugRecord } from '../shared/model';
 
 
 export type MedsAlcoholHandler = (index: number, property: string, value: string | DateTime | number | null) => void;

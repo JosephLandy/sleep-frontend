@@ -2,7 +2,7 @@ import React from 'react';
 import { storiesOf } from '@storybook/react';
 
 import WeekDayPicker from '../components/WeekDayPicker';
-import {WeekDay} from '../model';
+import {WeekDay} from '../shared/model';
 import { CssBaseline } from '@material-ui/core';
 // storiesOf('WeekDayPicker', module).add('Monday', () => <WeekDayPicker value={WeekDay.monday}/>)
 storiesOf('WeekDayPicker', module).addDecorator(storyFn => (

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { INightRecord } from '../model';
+import { INightRecord } from '../shared/model';
 
 import { DialogActions, 
   Button, DialogContent, 
@@ -17,7 +17,6 @@ import TimePropertySelector from './TimePropertySelector';
 import MedsAlcoholEditor, { MedsAlcoholHandler } from './MedsAlcoholEditor';
 import { DialogTitleProps } from '@material-ui/core/DialogTitle';
 
-
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     ratingCell1: {
@@ -31,11 +30,9 @@ const useStyles = makeStyles((theme: Theme) =>
       backgroundColor: red[200],
     },
     heading: {
-      // backgroundColor: red[200],
       float: "left",
     },
     heading2: {
-      // backgroundColor: green[200],
       float: "right",
     }
   })
@@ -143,7 +140,7 @@ export default function NightEditor({ night, closeEditor, submit }: NightEditorP
           }
         }}>
           Submit
-                </Button>
+        </Button>
       </DialogActions>
     </React.Fragment>
   );

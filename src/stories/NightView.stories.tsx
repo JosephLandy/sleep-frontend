@@ -1,10 +1,10 @@
 import React from 'react';
 import { storiesOf } from '@storybook/react';
-import { WeekDay, INightRecord } from '../model';
+import { WeekDay, INightRecord } from '../shared/model';
 import NightView from '../components/NightView';
 import { CssBaseline } from '@material-ui/core';
 import { DateTime } from 'luxon';
-import {sampleWeek, completeNight} from './WeekView.stories';
+import {sampleWeek, completeNight} from '../shared/sampledata';
 
 import {decorator} from '../App';
 

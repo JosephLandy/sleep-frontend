@@ -1,7 +1,7 @@
 import React from 'react';
 import { storiesOf } from '@storybook/react';
 import { action } from '@storybook/addon-actions';
-import { sampleWeek, completeNight } from './WeekView.stories';
+import { sampleWeek, completeNight } from '../shared/sampledata';
 
 import DrugsEditor from '../components/MedsAlcoholEditor';
 
@@ -12,7 +12,7 @@ const noName = [...completeNight.medsAndAlcohol];
 noName[0].substance = '';
 
 const actions = {
-    drugEdited: action('drugEdited')
+    drugsChanged: action('drugsChanged'),
 }
 
 storiesOf('MedsAlcoholEditor', module)

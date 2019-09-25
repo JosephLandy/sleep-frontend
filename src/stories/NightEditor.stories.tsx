@@ -1,9 +1,8 @@
 import React from 'react';
 import { storiesOf, addDecorator } from '@storybook/react';
-import { WeekDay, INightRecord } from '../model';
-import { CssBaseline, Dialog } from '@material-ui/core';
-import { DateTime } from 'luxon';
-import { sampleWeek, completeNight } from './WeekView.stories';
+import { WeekDay } from '../shared/model';
+import { Dialog } from '@material-ui/core';
+import { sampleWeek, completeNight } from '../shared/sampledata';
 import { action } from '@storybook/addon-actions';
 
 import NightEditor from '../components/NightEditor';
@@ -12,7 +11,6 @@ import { decorator } from '../App';
 addDecorator(decorator)
 
 const night = sampleWeek.nights[WeekDay.friday];
-
 
 const actions = {
     closeEditor: action('closeEditor'),
@@ -33,5 +31,4 @@ storiesOf('NightEditor', module).addDecorator(storyFn => (
     <NightEditor {...props} />
 )).add('entries complete', () => (
     <NightEditor {...{...props, night: completeNight}} />
-  // <NightEditor {...{ ...props, night: completeNight }} night={completeNight} />
 ));
