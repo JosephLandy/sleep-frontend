@@ -1,12 +1,12 @@
 import { DateTime, Duration } from 'luxon';
 
-import { WeekDay, populateWeek, INightRecord } from '../shared/model';
+import { populateWeek, INightRecord } from '../shared/model';
 
 const unixtimestamp = 156002828
 const luxonDate = DateTime.fromMillis(unixtimestamp * 1000);
 export const sampleWeek = populateWeek(luxonDate);
 
-const monday = sampleWeek.nights[WeekDay.monday];
+const monday = sampleWeek.nights[0];
 export const completeNight: INightRecord = {
   ...monday,
   edited: true,
@@ -44,7 +44,7 @@ export const completeNight: INightRecord = {
   ]
 }
 
-sampleWeek.nights[WeekDay.monday] = completeNight;
+sampleWeek.nights[0] = completeNight;
 
 
 export const priorSubstances = [

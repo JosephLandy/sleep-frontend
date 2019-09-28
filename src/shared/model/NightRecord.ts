@@ -1,23 +1,16 @@
 import { DateTime, Duration } from 'luxon';
 import { cloneDeepWith } from 'lodash';
-// very silly, but I'm doing it. I like the underscore. 
 
-// export * from './NightRecord';
-import {WeekDay, days} from '.';
-
+// very silly, but I'm doing it. I like the underscore for lodash.
 const _ = { cloneDeepWith };
 
-/*
-if my finger is broken, call td insurance back, let them know. 
-*/
 
 // I need to standardize the time fields a bit more for whatever the 
 // annoying time pickers need. 
-export interface IBaseNightRecord<T_DATE, T_DUR, T_DAY> {
+export interface IBaseNightRecord<T_DATE, T_DUR> {
   edited: boolean;
-  day: T_DAY;
   // this must be at like, midnight on the day. This is just for the date.
-  // time is separate. 
+  // times are recorded separately 
   dateAwake: T_DATE;
   bedTime?: T_DATE | null;
   fellAsleepAt?: T_DATE | null;
@@ -32,106 +25,103 @@ export interface IBaseNightRecord<T_DATE, T_DUR, T_DAY> {
   medsAndAlcohol: Array<{
     substance: string;
     time?: T_DATE | null;
-    // quantity should be optional
     quantity?: number;
   }>;
 }
 
 // this is the version that gets received by the server and the client.
 // I don't think I need to create one of these to send, because the DateTime
-// and Duration classes should automatically serialize to JSON as an ISO string.  
-export type INightRecordSerial = IBaseNightRecord<string, string, WeekDay>;
+// and Duration classes should automatically serialize to JSON as an ISO string,
+// since they have toJSON.
+export type INightRecordSerial = IBaseNightRecord<string, string>;
 
-export type INightRecordJSDate = IBaseNightRecord<Date, string, string>;
+export type INightRecordJSDate = IBaseNightRecord<Date, string>;
 
-export type INightRecordDBFormat = IBaseNightRecord<Date, string, string>;
+export type INightRecordDBFormat = IBaseNightRecord<Date, string>;
 
-export type INightRecord = IBaseNightRecord<DateTime, Duration, WeekDay>;
+export type INightRecord = IBaseNightRecord<DateTime, Duration>;
 
 export interface DrugRecord {
   substance: string;
-  time: DateTime | null;
+  time?: DateTime | null;
   // quantity should be optional
   quantity?: number;
 }
 
+// React probably won't retain the class fields, which should be fine, I just
+// have to ensure it's a class instance before using info from react. 
 export class NightRecord implements INightRecord {
-  edited: boolean = false;  
-  day: WeekDay;
+  edited: boolean = false;
   dateAwake: DateTime;
   bedTime?: DateTime | null | undefined;
   fellAsleepAt?: DateTime | null | undefined;
-  interuptions: { duration: Duration; notes: string; }[] = [];
+  interuptions: Array<{ duration: Duration; notes: string; }> = [];
   wokeUp?: DateTime | undefined;
   gotUp?: DateTime | undefined;
   restedRating: string = '';
   sleepQuality: string = '';
-  medsAndAlcohol: {
+  medsAndAlcohol: Array<{
     substance: string; 
     time?: DateTime | null | undefined;
-    // quantity should be optional
     quantity?: number | undefined;
-  }[] = [];
+  }> = [];
 
-  constructor(night: INightRecord) {
-    this.edited = night.edited;
-    this.dateAwake = night.dateAwake;
+  constructor(dt: DateTime) {
+    this.dateAwake = dt.startOf('day');
+  }
 
-    this.day = night.day;
-
-    console.log(night.day);
-    console.log(days[night.dateAwake.weekday]);
-
-    
-
-    this.bedTime = night.bedTime;
-    this.fellAsleepAt = night.fellAsleepAt;
-    this.interuptions = night.interuptions;
-    this.wokeUp = night.wokeUp;
-    this.gotUp = night.gotUp;
-    this.restedRating = night.restedRating;
-    this.sleepQuality = night.sleepQuality;
-    this.medsAndAlcohol = night.medsAndAlcohol;
+  static fromNightRecord(night: INightRecord) {
+    let k = new NightRecord(night.dateAwake);
+    k.bedTime = night.bedTime;
+    k.fellAsleepAt = night.fellAsleepAt;
+    k.interuptions = night.interuptions;
+    k.wokeUp = night.wokeUp;
+    k.gotUp = night.gotUp;
+    k.restedRating = night.restedRating;
+    k.sleepQuality = night.sleepQuality;
+    k.medsAndAlcohol = night.medsAndAlcohol;
+    return k;
   }
 
   static fromSerial(start: INightRecordSerial): NightRecord {
     let out: Partial<NightRecord> = {};
-    out.edited = start.edited;
-    out.dateAwake = DateTime.fromISO(start.dateAwake);
-    out.day = start.day;
-
+    let k = new NightRecord(DateTime.fromISO(start.dateAwake))
+    k.edited = start.edited;
     if (start.bedTime)
-      out.bedTime = DateTime.fromISO(start.bedTime);
+      k.bedTime = DateTime.fromISO(start.bedTime);
 
     if (start.fellAsleepAt)
-      out.fellAsleepAt = DateTime.fromISO(start.fellAsleepAt);
+      k.fellAsleepAt = DateTime.fromISO(start.fellAsleepAt);
 
-    out.interuptions = start.interuptions.map(({ duration, notes }) => {
+    k.interuptions = start.interuptions.map(({ duration, notes }) => {
       return { duration: Duration.fromISO(duration), notes };
     });
 
-    if (start.wokeUp) {
-      out.wokeUp = DateTime.fromISO(start.wokeUp);
-    }
-    if (start.gotUp) {
-      out.gotUp = DateTime.fromISO(start.gotUp);
-    }
-    out.restedRating = start.restedRating;
-    out.sleepQuality = start.sleepQuality;
-    out.medsAndAlcohol = start.medsAndAlcohol.map(({ substance, time, quantity }) => {
-      if (time) {
+    if (start.wokeUp)
+      k.wokeUp = DateTime.fromISO(start.wokeUp);
+
+    if (start.gotUp)
+      k.gotUp = DateTime.fromISO(start.gotUp);
+
+    k.restedRating = start.restedRating;
+    k.sleepQuality = start.sleepQuality;
+    k.medsAndAlcohol = start.medsAndAlcohol.map(({ substance, time, quantity }) => {
+      if (time)
         return { substance, time: DateTime.fromISO(time), quantity };
-      }
+
       return { substance, time: null, quantity };
     });
-    return (new NightRecord(out as INightRecord));
+    return k;
   }
 
   toDBFormat() {
-    let out: Partial<IBaseNightRecord<Date, string, WeekDay>> = {};
+
+    // I bet I could replace this with
+    // return convertToJSDate(this);
+
+    let out: Partial<INightRecordDBFormat> = {};
     out.edited = this.edited;
     out.dateAwake = this.dateAwake.toJSDate();
-    out.day = this.day;
 
     if (this.bedTime)
       out.bedTime = this.bedTime.toJSDate();
@@ -159,9 +149,7 @@ export class NightRecord implements INightRecord {
     });
     return (out as INightRecordDBFormat);
   }
-
 }
-
 
 // https://lodash.com/docs/4.17.15#cloneWith
 function customizerJSDate(value: any) {

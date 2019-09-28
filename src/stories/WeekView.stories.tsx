@@ -1,6 +1,6 @@
 import React from 'react';
 import { storiesOf } from '@storybook/react';
-import { WeekDay, populateWeek, INightRecord } from '../shared/model';
+import { populateWeek, INightRecord } from '../shared/model';
 // import CssBaseline froTim '@material-ui/core/CssBaseline';
 import WeekView from '../components/WeekView';
 import { DateTime, Duration } from 'luxon';

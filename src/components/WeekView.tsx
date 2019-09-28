@@ -3,7 +3,7 @@ import { Grid, Button } from '@material-ui/core';
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
 import { DateTime } from 'luxon';
 
-import { days, IWeekRecord, INightRecord} from '../shared/model';
+import {IWeekRecord, INightRecord} from '../shared/model';
 import NightView from './NightView';
 // I can literally load an svg as a react component.
 //https://create-react-app.dev/docs/adding-images-fonts-and-files
@@ -49,16 +49,21 @@ export default function ({ weekinput }: WeekProps) {
   // const classes = useStyles();
   // Because I have to keep state somewhere right now, I'm going to
   // just store the props into state. Apparently it's ok to use props
-  // to initialize state. Sort of. Maybe. 
+  // to initialize state. Sort of. Maybe. Ok for testing, but not really
+  // long term.
   const [week, setWeek] = useState(weekinput);
 
   function onUpdateNight(night: INightRecord) {
     const updatedWeek = { ...week };
-    updatedWeek.nights[night.day] = night;
+    updatedWeek.nights[night.dateAwake.weekday - 1] = night;
     putNight(night);
     // send the new/updated night to the api.
     setWeek(updatedWeek);
   }
+
+  // ok, so to fetch the data, without hooks I would call fetch in componentDidMount, 
+  // and then call setState. Here I'll need to use the useEffect hook. 
+  // I only really need this to happen when the component mounts.
 
   return (
     <div>
@@ -69,13 +74,14 @@ export default function ({ weekinput }: WeekProps) {
         <Grid item>
           <NextButton direction="left" />
         </Grid>
-        {days.map(day => { // these should all be the same height
-          return <NightView key={day} night={week.nights[day]} nightUpdated={onUpdateNight} />
+        {weekinput.nights.map((night, index) => { // these should all be the same height
+          return <NightView key={index} night={night} nightUpdated={onUpdateNight} />
         })}
         <Grid item>
           <NextButton direction="right" />
         </Grid>
       </Grid>
+
       <Button onClick={e => {
         // I need to add a proxy for api requests from storybook separately from the 
         // react one. It looks a bit more complicated, but not too bad. 
@@ -117,7 +123,7 @@ export default function ({ weekinput }: WeekProps) {
 
 function putNight(night: INightRecord) {
   // console.log(JSON.stringify(night));
-  fetch('/api/night', {
+  fetch('/api/nights', {
     method: 'PUT',
     headers: {
       'Content-Type': 'application/json'

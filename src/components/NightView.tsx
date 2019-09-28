@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Grid, Paper, Box, Fab, Typography, Dialog, Divider, } from '@material-ui/core';
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
-import { WeekDay, days, INightRecord } from '../shared/model';
+import { INightRecord } from '../shared/model';
 import AddIcon from '@material-ui/icons/Add';
 import NightEditor from './NightEditor';
 import TextField from '@material-ui/core/TextField';
@@ -70,7 +70,7 @@ export default function NightView({ night, nightUpdated }: Props) {
       }}>
         <div>
           <Typography variant="h5">
-            {night.day}
+            {night.dateAwake.weekdayLong}
           </Typography>
           <Typography>
             {night.dateAwake.toLocaleString({ month: 'long', day: 'numeric', })}
@@ -97,7 +97,7 @@ export default function NightView({ night, nightUpdated }: Props) {
     content = (
       <Paper className={classes.paper}>
         <Typography variant="h5">
-          {night.day}
+          {night.dateAwake.weekdayLong}
         </Typography>
         <Typography>
           {night.dateAwake.toLocaleString()}

@@ -1,6 +1,5 @@
 import React from 'react';
 import { storiesOf, addDecorator } from '@storybook/react';
-import { WeekDay } from '../shared/model';
 import { Dialog } from '@material-ui/core';
 import { sampleWeek, completeNight } from '../shared/sampledata';
 import { action } from '@storybook/addon-actions';
@@ -10,7 +9,7 @@ import { decorator } from '../App';
 
 addDecorator(decorator)
 
-const night = sampleWeek.nights[WeekDay.friday];
+const night = sampleWeek.nights[4];
 
 const actions = {
     closeEditor: action('closeEditor'),
