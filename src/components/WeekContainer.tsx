@@ -1,5 +1,6 @@
 import React, {useEffect, useState} from 'react'
 import { DateTime } from 'luxon';
+import WeekView from './WeekView';
 
 import {NightRecord, IWeekRecord, populateWeek} from '../shared/model';
 
@@ -11,12 +12,13 @@ export default function WeekContainer({nightInWeek}: Props) {
   // const [loaded, setLoaded] = useState(false);
   // const [nights, setNights] = useState<NightRecord[]>([]);
 
-  const [week, setWeek] = useState<IWeekRecord>({weekOf: nightInWeek.startOf('week'),nights: [], loaded: false});
+  const [week, setWeek] = useState<IWeekRecord>({weekOf: nightInWeek.startOf('week'), nights: [], loaded: false});
   // passing empty array of dependencies tells react that the effect never
   // needs to run more than once. Makes it effectively a componentDidMount.
   
   // get the initial record of the week from the server. 
-  // don't need to get data again unless the week is changed.
+  // don't need to get data again unless I switch to a different week
+  // 
   useEffect(() => {
     getWeek();
   }, []);
@@ -46,7 +48,7 @@ export default function WeekContainer({nightInWeek}: Props) {
 
   return (
     <div>
-      
+      <WeekView weekinput={week} />
     </div>
   );
 }

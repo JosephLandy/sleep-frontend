@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Grid, Button } from '@material-ui/core';
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
 import { DateTime } from 'luxon';
@@ -53,17 +53,17 @@ export default function ({ weekinput }: WeekProps) {
   // long term.
   const [week, setWeek] = useState(weekinput);
 
+  useEffect(() => {
+    
+  }, []);
+
   function onUpdateNight(night: INightRecord) {
     const updatedWeek = { ...week };
     updatedWeek.nights[night.dateAwake.weekday - 1] = night;
-    putNight(night);
     // send the new/updated night to the api.
+    putNight(night);
     setWeek(updatedWeek);
   }
-
-  // ok, so to fetch the data, without hooks I would call fetch in componentDidMount, 
-  // and then call setState. Here I'll need to use the useEffect hook. 
-  // I only really need this to happen when the component mounts.
 
   return (
     <div>
