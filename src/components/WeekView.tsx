@@ -46,16 +46,10 @@ export function NextButton({ direction }: { direction: string }) {
 }
 
 export default function ({ weekinput }: WeekProps) {
-  // const classes = useStyles();
-  // Because I have to keep state somewhere right now, I'm going to
-  // just store the props into state. Apparently it's ok to use props
-  // to initialize state. Sort of. Maybe. Ok for testing, but not really
-  // long term.
+  const classes = useStyles();
+  // I'm going to just store the props into state. Apparently it's ok to use props
+  // to initialize state. Sort of. Maybe. Ok for testing, but not necessarily long term.
   const [week, setWeek] = useState(weekinput);
-
-  useEffect(() => {
-    
-  }, []);
 
   function onUpdateNight(night: INightRecord) {
     const updatedWeek = { ...week };
@@ -67,21 +61,12 @@ export default function ({ weekinput }: WeekProps) {
 
   return (
     <div>
-      <h2>
-        {`week of ${week.weekOf.toLocaleString(DateTime.DATE_FULL)}`}
-      </h2>
-      <Grid container justify="space-between">
-        <Grid item>
-          <NextButton direction="left" />
-        </Grid>
+      <Grid item container justify="space-between" wrap="nowrap" spacing={2} className={classes.root}>
         {weekinput.nights.map((night, index) => { // these should all be the same height
           return <NightView key={index} night={night} nightUpdated={onUpdateNight} />
         })}
-        <Grid item>
-          <NextButton direction="right" />
-        </Grid>
       </Grid>
-
+{/* 
       <Button onClick={e => {
         // I need to add a proxy for api requests from storybook separately from the 
         // react one. It looks a bit more complicated, but not too bad. 
@@ -116,7 +101,7 @@ export default function ({ weekinput }: WeekProps) {
 
       }}>
         get complete night. 
-      </Button>
+      </Button> */}
     </div>
   );
 }
