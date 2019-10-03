@@ -161,7 +161,7 @@ export default function NightView({ night, nightUpdated }: Props) {
         {content}
       </Paper>
       
-      <Dialog open={open} onClose={closeEditor} scroll="paper" keepMounted>
+      <Dialog open={open} onClose={closeEditor} scroll="paper">
         <NightEditor night={night} closeEditor={closeEditor} submit={submit} />
       </Dialog>
     </Grid>
