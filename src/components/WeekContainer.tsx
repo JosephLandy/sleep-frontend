@@ -1,10 +1,13 @@
 import React, {useEffect, useState} from 'react'
 import { DateTime } from 'luxon';
 import WeekView from './WeekView';
-import {NightRecord, IWeekRecord, populateWeek} from '../shared/model';
-import { CircularProgress} from '@material-ui/core';
+import {NightRecord, IWeekRecord, populateWeek, INightRecord} from '../shared/model';
+import { CircularProgress, Grid} from '@material-ui/core';
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
 import { orange } from '@material-ui/core/colors';
+import NightView from './NightView';
+
+import {cloneDeep} from 'lodash';
 
 type Props = {
   weekOf: DateTime;
@@ -36,7 +39,7 @@ export default function WeekContainer({weekOf}: Props) {
   const classes = useStyles();
 
   type StateType = {
-    nights: NightRecord[],
+    nights: INightRecord[],
     loaded: boolean
   }
 
@@ -45,10 +48,6 @@ export default function WeekContainer({weekOf}: Props) {
     nights: [],
     loaded: false,
   });
-
-  // const [week, setWeek] = useState<IWeekRecord>({weekOf: weekOf.startOf('week'), nights: [], loaded: false});
-  // passing empty array of dependencies tells react that the effect never
-  // needs to run more than once. Makes it effectively a componentDidMount.
   // get the initial record of the week from the server. 
   // don't need to get data again unless I switch to a different week
   useEffect(() => {
@@ -57,7 +56,7 @@ export default function WeekContainer({weekOf}: Props) {
       if (resp.ok) {
         resp.json().then(jsonArray => {
           if (Array.isArray(jsonArray) && jsonArray.length > 0) {
-            let nights = jsonArray.map((val) => NightRecord.fromSerial(val));
+            let nights: INightRecord[] = jsonArray.map((val) => NightRecord.fromSerial(val));
             nights = padNights(weekOf, nights);
             setData({
               nights,
@@ -68,10 +67,10 @@ export default function WeekContainer({weekOf}: Props) {
       } else if (resp.status === 404) {
         let w = populateWeek(weekOf);
         setData({
-          nights: (w.nights as NightRecord[]),
+          // nights: (w.nights as NightRecord[]),
+          nights: w.nights,
           loaded: true,
         });
-        // setWeek(populateWeek(week.weekOf));
       } else {
         console.log(resp.status);
       }
@@ -79,18 +78,29 @@ export default function WeekContainer({weekOf}: Props) {
   }, [weekOf]);
 
 
+  function onUpdateNight(night: INightRecord) {
+    let updatedNights = [...data.nights];
+    updatedNights[night.dateAwake.weekday - 1] = night;
+    putNight(night);
+    setData({
+      ...data,
+      nights: updatedNights,
+    });
+  }
+
   if (data.loaded) {
     const week: IWeekRecord = {
       nights: data.nights,
       loaded: true,
       weekOf
     };
-
     return (
-      <div>
-        <WeekView weekinput={week} />
-      </div>
-    );
+      <Grid container justify="space-between" wrap="nowrap" spacing={2} className={classes.root}>
+        {data.nights.map(
+          (night, index) => <NightView key={index} night={night} nightUpdated={onUpdateNight} />
+        )}
+      </Grid>
+    )
   } else {
     return (
       <div className={classes.progressContainer}>
@@ -107,18 +117,36 @@ export default function WeekContainer({weekOf}: Props) {
  * be missing. 
  * @param ns array of nights in week
  */
-function padNights(weekStart: DateTime, nightsInit: NightRecord[]) {
+function padNights(weekStart: DateTime, nightsInit: INightRecord[]) {
   if (nightsInit.length === 7) {
     return nightsInit;
   }
-  let out: NightRecord[] = new Array<NightRecord>(7);
+  let out: INightRecord[] = new Array<INightRecord>(7);
   for (let i = 0; i < out.length; i++) {
     if (nightsInit.length > 0 && i === nightsInit[0].dateAwake.weekday - 1) {
-      out[i] = (nightsInit.shift() as NightRecord);
+      out[i] = (nightsInit.shift() as INightRecord);
     } else {
       out[i] = new NightRecord(weekStart.plus({days: i}));
     }
   }
   return out;
+}
+
+function putNight(night: INightRecord) {
+  // console.log(JSON.stringify(night));
+  console.log('called putNight');
+  fetch('/api/nights', {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(night),
+  }).then((response) => {
+    console.log('posted night');
+    console.log(response.statusText);
+  })
+    .catch(error => {
+      console.log(`error occured ${error}`);
+    });
 }
 

@@ -6,9 +6,8 @@ import { DialogActions,
   DialogContentText, DialogTitle, Grid, Typography, TextField } from '@material-ui/core';
 
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
-// import { green, orange, red } from '@material-ui/core/colors';
 
-import { isEqual } from 'lodash';
+import { isEqual, cloneDeep } from 'lodash';
 
 import { DateTime, } from 'luxon';
 
@@ -47,7 +46,7 @@ type NightEditorProps = {
 export default function NightEditor({ night, closeEditor, submit }: NightEditorProps) {
   // for the time being, this is a suitable deepcopy. Change when it gets 
   // more complicated.
-  const [edits, setEdits] = useState<INightRecord>({ ...night });
+  const [edits, setEdits] = useState<INightRecord>(cloneDeep(night));
   const [drugsEdits, setDrugsEdits] = useState([...night.medsAndAlcohol]);
   const classes = useStyles();
 
@@ -75,7 +74,7 @@ export default function NightEditor({ night, closeEditor, submit }: NightEditorP
     }));
   };
 
-  console.log(`editing night of ${night.dateAwake.toLocaleString(DateTime.DATE_HUGE)}`);
+  // console.log(`editing night of ${night.dateAwake.toLocaleString(DateTime.DATE_HUGE)}`);
 
   return (
     <React.Fragment>

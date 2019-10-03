@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Grid, Button } from '@material-ui/core';
+import { Grid } from '@material-ui/core';
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
 // import { DateTime } from 'luxon';
 
@@ -7,17 +7,13 @@ import {IWeekRecord, INightRecord} from '../shared/model';
 import NightView from './NightView';
 // I can literally load an svg as a react component.
 //https://create-react-app.dev/docs/adding-images-fonts-and-files
-import { ReactComponent as Triangle } from '../TriangleArrow-Left.svg';
+// import { ReactComponent as Triangle } from '../TriangleArrow-Left.svg';
 // import { completeNight } from '../shared/sampledata';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     root: {
       flexGrow: 1,
-    },
-    nextWeekButton: {
-      width: 50,
-      opacity: 50,
     },
   })
 );
@@ -26,29 +22,11 @@ type WeekProps = {
   weekinput: IWeekRecord
 };
 
-// left and right buttons to advance or move back a week. 
-// needs a bunch of states and things though. 
-export function NextButton({ direction }: { direction: string }) {
-  const classes = useStyles();
-  if (direction === 'left') {
-    return (
-      <Button className={classes.nextWeekButton}>
-        <Triangle width={40} />
-      </Button>
-    );
-  } else {
-    return (
-      <Button className={classes.nextWeekButton}>
-        <Triangle width={40} transform="rotate(180)" />
-      </Button>
-    );
-  }
-}
 
 export default function ({ weekinput }: WeekProps) {
   const classes = useStyles();
   // I'm going to just store the props into state. Apparently it's ok to use props
-  // to initialize state. Sort of. Maybe. Ok for testing, but not necessarily long term.
+  // to initialize state. Sort of. Maybe. Ok for testing, but not necessarily long term. VERY BAD. CAUSED PROBLEMS.
   const [week, setWeek] = useState(weekinput);
 
   function onUpdateNight(night: INightRecord) {
