@@ -1,12 +1,10 @@
 import React, {useEffect, useState} from 'react'
 import { DateTime } from 'luxon';
-import WeekView, {NextButton} from './WeekView';
-
+import WeekView from './WeekView';
 import {NightRecord, IWeekRecord, populateWeek} from '../shared/model';
 import { CircularProgress} from '@material-ui/core';
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
-
-import { green, orange, red } from '@material-ui/core/colors';
+import { orange } from '@material-ui/core/colors';
 
 type Props = {
   weekOf: DateTime;
@@ -54,46 +52,6 @@ export default function WeekContainer({weekOf}: Props) {
   // get the initial record of the week from the server. 
   // don't need to get data again unless I switch to a different week
   useEffect(() => {
-    getWeek();
-  }, [weekOf]);
-
-  // need to deal with the double tap case. User hits next/previous week button
-  // again before the first request completes. Desired behavior is that the first
-  // fetch should not result in a state update, and wait for the second to complete 
-  // before changing state. 
-  // function getWeek() {
-  //   // I might be able to solve the double tap problem by copying the value of the week
-  //   // that's being fetched, and then checking if it still equals the current week. 
-  //   // better way to deal with this is probably to just rerender this with a different week identifier
-  //   // as the input. Then the week gets loaded only when the component mounts. If the fetch completes,
-  //   // then it doesn't matter because the component has been destroyed.
-  //   const url = `/api/weeks/${week.weekOf.toISO()}`;
-  //   fetch(url).then(resp => {
-  //     if (resp.ok) {
-  //       resp.json().then(jsonArray => {
-  //         if (Array.isArray(jsonArray) && jsonArray.length > 0) {
-  //           let nights = jsonArray.map((val) => NightRecord.fromSerial(val));
-  //           nights = padNights(week.weekOf, nights);
-  //           setWeek({
-  //             weekOf: week.weekOf,
-  //             nights,
-  //             loaded: true,
-  //           });
-  //         }
-  //       });
-  //     } else if (resp.status === 404) {
-  //       setWeek(populateWeek(week.weekOf));
-  //     } else {
-  //       console.log(resp.status);
-  //     }
-  //   });
-  // }
-  function getWeek() {
-    // I might be able to solve the double tap problem by copying the value of the week
-    // that's being fetched, and then checking if it still equals the current week. 
-    // better way to deal with this is probably to just rerender this with a different week identifier
-    // as the input. Then the week gets loaded only when the component mounts. If the fetch completes,
-    // then it doesn't matter because the component has been destroyed.
     const url = `/api/weeks/${weekOf.toISO()}`;
     fetch(url).then(resp => {
       if (resp.ok) {
@@ -118,7 +76,8 @@ export default function WeekContainer({weekOf}: Props) {
         console.log(resp.status);
       }
     });
-  }
+  }, [weekOf]);
+
 
   if (data.loaded) {
     const week: IWeekRecord = {

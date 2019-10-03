@@ -12,14 +12,16 @@ export interface IBaseNightRecord<T_DATE, T_DUR> {
   // this must be at like, midnight on the day. This is just for the date.
   // times are recorded separately 
   dateAwake: T_DATE;
-  bedTime?: T_DATE | null;
-  fellAsleepAt?: T_DATE | null;
+  // bedTime?: T_DATE | null;
+  bedTime?: T_DATE;
+  // fellAsleepAt?: T_DATE | null;
+  fellAsleepAt?: T_DATE;
+  wokeUp?: T_DATE;
+  gotUp?: T_DATE;
   interuptions: Array<{
     duration: T_DUR;
     notes: string;
   }>;
-  wokeUp?: T_DATE;
-  gotUp?: T_DATE;
   restedRating: string;
   sleepQuality: string;
   medsAndAlcohol: Array<{
@@ -27,6 +29,8 @@ export interface IBaseNightRecord<T_DATE, T_DUR> {
     time?: T_DATE | null;
     quantity?: number;
   }>;
+
+  notes: string;
 }
 
 // this is the version that gets received by the server and the client.
@@ -48,13 +52,18 @@ export interface DrugRecord {
   quantity?: number;
 }
 
+export interface IntRecord {
+  duration: Duration;
+  notes: string;
+}
+
 // React probably won't retain the class fields, which should be fine, I just
 // have to ensure it's a class instance before using info from react. 
 export class NightRecord implements INightRecord {
   edited: boolean = false;
   dateAwake: DateTime;
-  bedTime?: DateTime | null | undefined;
-  fellAsleepAt?: DateTime | null | undefined;
+  bedTime?: DateTime;
+  fellAsleepAt?: DateTime;
   interuptions: Array<{ duration: Duration; notes: string; }> = [];
   wokeUp?: DateTime | undefined;
   gotUp?: DateTime | undefined;
@@ -65,6 +74,7 @@ export class NightRecord implements INightRecord {
     time?: DateTime | null | undefined;
     quantity?: number | undefined;
   }> = [];
+  notes: string = '';
 
   constructor(dt: DateTime) {
     this.dateAwake = dt.startOf('day');
@@ -84,7 +94,7 @@ export class NightRecord implements INightRecord {
   }
 
   static fromSerial(start: INightRecordSerial): NightRecord {
-    let out: Partial<NightRecord> = {};
+    // let out: Partial<NightRecord> = {};
     let k = new NightRecord(DateTime.fromISO(start.dateAwake))
     k.edited = start.edited;
     if (start.bedTime)

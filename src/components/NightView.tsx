@@ -4,20 +4,14 @@ import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
 import { INightRecord } from '../shared/model';
 import AddIcon from '@material-ui/icons/Add';
 import NightEditor from './NightEditor';
-import TextField from '@material-ui/core/TextField';
-import { DateTime, LocaleOptions } from 'luxon';
-import { orange } from '@material-ui/core/colors';
+// import TextField from '@material-ui/core/TextField';
+import { DateTime } from 'luxon';
+// import { orange } from '@material-ui/core/colors';
 
-import MedsAlcoholView from './MedsAlcoholView';
+// import MedsAlcoholView from './MedsAlcoholView';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
-    root: {
-      flexGrow: 1,
-    },
-    editedBox: {
-      backgroundColor: orange[900],
-    },
     paper: {
       width: 200,
       // width: 250,
@@ -28,6 +22,11 @@ const useStyles = makeStyles((theme: Theme) =>
       color: theme.palette.text.secondary,
       display: 'flex',
       flexDirection: "column",
+    },
+    divClickable: {
+      width: "100%",
+      height: "100%",
+      // backgroundColor: orange[200],
     },
     fieldLabel: {
       display: 'inline',
@@ -45,6 +44,43 @@ type Props = {
   nightUpdated: (newNight: INightRecord) => void;
 }
 
+type TFProps = {
+  t?: DateTime;
+  l: string;
+}
+export function TimeField({t, l}: TFProps) {
+  const classes = useStyles();
+  return (
+    <Grid item xs={12}>
+      <Typography className={classes.fieldLabel} variant="body2">{l}</Typography>
+      <Typography className={classes.fieldValue}>
+        {` ${t ? t.toLocaleString(DateTime.TIME_24_SIMPLE) : ''}`}
+      </Typography>
+    </Grid>
+  );
+}
+
+type FProps = {
+  v?: DateTime | string;
+  l: string;
+}
+
+// function isDateTime(v: DateTime | string): v is DateTime {
+//   return DateTime.isDateTime(v);
+// }
+
+// export function Field({v, l}: FProps) {
+//   const classes = useStyles();
+//   return (
+//     <Grid item xs={12}>
+//       <Typography className={classes.fieldLabel} variant="body2">{l}</Typography>
+//       <Typography className={classes.fieldValue}>
+//         {` ${v ? v.toLocaleString(DateTime.TIME_24_SIMPLE) : ''}`}
+//       </Typography>
+//     </Grid>
+//   )
+// }
+
 export default function NightView({ night, nightUpdated }: Props) {
 
   const classes = useStyles();
@@ -60,14 +96,59 @@ export default function NightView({ night, nightUpdated }: Props) {
   }
 
   let content;
-  
+
+  // I should just break these out into new components this is too much. 
   if (night.edited) {
     // remember: stopPropagation, to keep events from propagating up to parents. 
     content = (
-      <Paper className={classes.paper} onClick={(e) => {
+      <div className={classes.divClickable} onClick={(e) => {
         e.preventDefault();
         setOpen(true);
       }}>
+        <Grid container >
+          <TimeField t={night.bedTime} l="Bedtime:"/>
+          <TimeField t={night.fellAsleepAt} l="Fell asleep:"/>
+          <TimeField t={night.wokeUp} l="Woke up at:" />
+          <TimeField t={night.gotUp} l="Got up:" />
+          <Grid item xs={12}>
+            <Typography className={classes.fieldLabel} variant="body2">
+              Rested rating:
+            </Typography>
+            <Typography className={classes.fieldValue}>
+              {night.restedRating}
+            </Typography>
+          </Grid>
+          <Grid item xs={12}>
+            <Typography className={classes.fieldLabel} variant="body2">
+              Sleep quality:
+            </Typography>
+            <Typography className={classes.fieldValue}>
+              {night.sleepQuality}
+            </Typography>
+          </Grid>
+        </Grid>
+      </div>
+    );
+  } else {
+    content = (
+      <Box display="flex"
+        flexDirection={"column"}
+        flexGrow={1}
+        justifyContent="space-evenly"
+        alignItems="center"
+      >
+        <div>
+          <Fab onClick={() => { setOpen(true) }}>
+            <AddIcon />
+          </Fab>
+        </div>
+      </Box>
+    );
+  }
+
+  return (
+    <Grid item>
+      <Paper className={classes.paper}>
         <div>
           <Typography variant="h5">
             {night.dateAwake.weekdayLong}
@@ -77,50 +158,9 @@ export default function NightView({ night, nightUpdated }: Props) {
           </Typography>
         </div>
         <Divider />
-        <Grid container>
-          <Grid item xs={12}>
-            <Typography className={classes.fieldLabel} variant="body2">Bedtime:</Typography>
-            <Typography className={classes.fieldValue}>
-              {` ${night.bedTime ? night.bedTime.toLocaleString(DateTime.TIME_24_SIMPLE) : ''}`}
-            </Typography>
-          </Grid>
-          <Grid item xs={12}>
-            <Typography className={classes.fieldLabel} variant="body2">Fell asleep:</Typography>
-            <Typography className={classes.fieldValue}>
-              {` ${night.fellAsleepAt ? night.fellAsleepAt.toLocaleString(DateTime.TIME_24_SIMPLE) : ''}`}
-            </Typography>
-          </Grid>
-        </Grid>
+        {content}
       </Paper>
-    );
-  } else {
-    content = (
-      <Paper className={classes.paper}>
-        <Typography variant="h5">
-          {night.dateAwake.weekdayLong}
-        </Typography>
-        <Typography>
-          {night.dateAwake.toLocaleString()}
-        </Typography>
-        <Box display="flex"
-          flexDirection={"column"}
-          flexGrow={1}
-          justifyContent="space-evenly"
-          alignItems="center"
-        >
-          <div>
-            <Fab onClick={() => { setOpen(true) }}>
-              <AddIcon />
-            </Fab>
-          </div>
-        </Box>
-      </Paper>
-    );
-  }
-
-  return (
-    <Grid item>
-      {content}
+      
       <Dialog open={open} onClose={closeEditor} scroll="paper" keepMounted>
         <NightEditor night={night} closeEditor={closeEditor} submit={submit} />
       </Dialog>

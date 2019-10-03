@@ -1,14 +1,14 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Grid, Button } from '@material-ui/core';
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
-import { DateTime } from 'luxon';
+// import { DateTime } from 'luxon';
 
 import {IWeekRecord, INightRecord} from '../shared/model';
 import NightView from './NightView';
 // I can literally load an svg as a react component.
 //https://create-react-app.dev/docs/adding-images-fonts-and-files
 import { ReactComponent as Triangle } from '../TriangleArrow-Left.svg';
-import { completeNight } from '../shared/sampledata';
+// import { completeNight } from '../shared/sampledata';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -55,6 +55,7 @@ export default function ({ weekinput }: WeekProps) {
     const updatedWeek = { ...week };
     updatedWeek.nights[night.dateAwake.weekday - 1] = night;
     // send the new/updated night to the api.
+    console.log('Logging week - %O', updatedWeek);
     putNight(night);
     setWeek(updatedWeek);
   }
@@ -73,13 +74,6 @@ export default function ({ weekinput }: WeekProps) {
         getPriorSubstances();
       }}>
         prior substances
-      </Button>
-      <Button onClick={e => {
-        // I had to add a proxy for api requests from storybook separately from the 
-        // react one.
-        getHell0();
-      }}>
-        hello
       </Button>
       <Button onClick={e => {
         getNight();
@@ -108,6 +102,7 @@ export default function ({ weekinput }: WeekProps) {
 
 function putNight(night: INightRecord) {
   // console.log(JSON.stringify(night));
+  console.log('called putNight');
   fetch('/api/nights', {
     method: 'PUT',
     headers: {
@@ -123,41 +118,27 @@ function putNight(night: INightRecord) {
   });
 }
 
-function getNight() {
-  fetch('/api/night').then(resp => {
-    console.log(resp.status)
-    return resp.text();
-  }).then(val => { console.log(val) });
-}
+// function getNight2(night: DateTime | string) {
+//   let nightstr: string;
+//   if (typeof night === 'string') {
+//     nightstr = night;
+//   } else {
+//     nightstr = (night as DateTime).toISO();
+//   }
+//   fetch(`/api/nights/${nightstr}`).then(resp => {
+//     console.log(resp.status);
+//     return resp.text();
+//   }).then(val => { console.log(val) });
+// }
 
-function getNight2(night: DateTime | string) {
-  let nightstr: string;
-  if (typeof night === 'string') {
-    nightstr = night;
-  } else {
-    nightstr = (night as DateTime).toISO();
-  }
-  fetch(`/api/nights/${nightstr}`).then(resp => {
-    console.log(resp.status);
-    return resp.text();
-  }).then(val => { console.log(val) });
-}
+// function getPriorSubstances() {
+//   fetch('/api/priorsubstances').then(resp => resp.json()).then(myjson => {
+//     console.log(JSON.stringify(myjson));
+//   });
+// }
 
-function getHell0() {
-  fetch('/api/hello').then(resp => {
-    console.log(resp.status)
-    return resp.text();
-  }).then(val => { console.log(val) });
-}
-
-function getPriorSubstances() {
-  fetch('/api/priorsubstances').then(resp => resp.json()).then(myjson => {
-    console.log(JSON.stringify(myjson));
-  });
-}
-
-function clearDatabase() {
-  fetch('/api/clear').then(resp => {
-    console.log(resp.statusText);
-  })
-}
+// function clearDatabase() {
+//   fetch('/api/clear').then(resp => {
+//     console.log(resp.statusText);
+//   })
+// }

@@ -9,15 +9,19 @@ import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
 import { DatePicker } from '@material-ui/pickers';
 
 import NavigateBeforeIcon from '@material-ui/icons/NavigateBefore';
-import { green, orange, red } from '@material-ui/core/colors';
+import { green } from '@material-ui/core/colors';
 
-import {sampleWeek} from '../shared/sampledata'
-import WeekView from './WeekView';
+// import {sampleWeek} from '../shared/sampledata'
+// import WeekView from './WeekView';
 import WeekContainer from './WeekContainer';
 
 type Props = {
   initialDate: DateTime;
 }
+
+/*
+I need to add an analytics route to the backend thing for the database 
+*/
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -39,16 +43,6 @@ const useStyles = makeStyles((theme: Theme) =>
   })
 );
 
-function DirectionButton({dir}: {dir: string}) {
-  return (
-    <IconButton edge="end">
-      <NavigateBeforeIcon 
-        transform={dir === "right" ? "rotate(180)" : undefined} 
-        fontSize="large" />
-    </IconButton>
-  )
-}
-
 export default function WeekNavigator({initialDate}: Props) {
   const classes = useStyles();
   let [current, setCurrent] = useState(initialDate.startOf('week'));
@@ -67,7 +61,7 @@ export default function WeekNavigator({initialDate}: Props) {
   }
 
   function datePickerLabel() {
-    return `Week of ${current.toLocaleString(DateTime.DATETIME_FULL)}`
+    return ` ${current.toLocaleString(DateTime.DATE_FULL)}`
   }
 
   function handleDatePicker(date: DateTime | null) {
@@ -98,13 +92,16 @@ export default function WeekNavigator({initialDate}: Props) {
               <NavigateBeforeIcon fontSize="large" />
             </IconButton>
             {/* one of the examples for datepicker shows highlighting selected weeks */}
+            <Typography>
+              Week of 
+            </Typography>
             <DatePicker value={current} onChange={handleDatePicker}
               disableFuture
               labelFunc={datePickerLabel}
             />
-            <Typography>
+            {/* <Typography>
               {`Week of ${current.toLocaleString(DateTime.DATE_FULL)}`}
-            </Typography>
+            </Typography> */}
             <IconButton
               edge="end"
               style={{ float: "right" }} 
@@ -125,10 +122,4 @@ export default function WeekNavigator({initialDate}: Props) {
     </div>
     
   )
-}
-
-
-function dateValid(date: DateTime) {
-
-
 }

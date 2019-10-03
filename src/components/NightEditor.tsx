@@ -3,10 +3,10 @@ import { INightRecord } from '../shared/model';
 
 import { DialogActions, 
   Button, DialogContent, 
-  DialogContentText, DialogTitle, Grid, Typography } from '@material-ui/core';
+  DialogContentText, DialogTitle, Grid, Typography, TextField } from '@material-ui/core';
 
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
-import { green, orange, red } from '@material-ui/core/colors';
+// import { green, orange, red } from '@material-ui/core/colors';
 
 import { isEqual } from 'lodash';
 
@@ -14,20 +14,19 @@ import { DateTime, } from 'luxon';
 
 import RatingSelect from './RatingSelect';
 import TimePropertySelector from './TimePropertySelector';
-import MedsAlcoholEditor, { MedsAlcoholHandler } from './MedsAlcoholEditor';
-import { DialogTitleProps } from '@material-ui/core/DialogTitle';
+import MedsAlcoholEditor from './MedsAlcoholEditor';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     ratingCell1: {
-      backgroundColor: green[200],
+      // backgroundColor: green[200],
     },
     ratingCell2: {
-      backgroundColor: orange[200],
+      // backgroundColor: orange[200],
     },
     containerGrid: {
       flexGrow: 1,
-      backgroundColor: red[200],
+      // backgroundColor: red[200],
     },
     heading: {
       float: "left",
@@ -54,6 +53,9 @@ export default function NightEditor({ night, closeEditor, submit }: NightEditorP
 
   const handleTimeChange = (t: DateTime | null, property: string) => {
     if (t) {
+      // have to set the time to apply to this night, not the current date. 
+      let corrected = t.day
+      console.log(`set time value ${property} to ${t.toLocaleString(DateTime.DATETIME_HUGE)}`);
       setEdits(oldEdits => ({
         ...oldEdits,
         [property]: t,
@@ -72,6 +74,8 @@ export default function NightEditor({ night, closeEditor, submit }: NightEditorP
       [e.target.name as string]: e.target.value,
     }));
   };
+
+  console.log(`editing night of ${night.dateAwake.toLocaleString(DateTime.DATE_HUGE)}`);
 
   return (
     <React.Fragment>
@@ -125,6 +129,16 @@ export default function NightEditor({ night, closeEditor, submit }: NightEditorP
           </Grid>
           <Grid item xs={12}>
             <MedsAlcoholEditor drugs={drugsEdits} drugsChanged={setDrugsEdits} />
+          </Grid>
+          <Grid item xs={12}>
+            <TextField multiline defaultValue={edits.notes} fullWidth label="Notes" rows={4}
+            inputProps={{onBlur: (e) => {
+              if (e.target.value !== '') {
+                setEdits(oldEdits => {
+                  return {...oldEdits, notes: e.target.value}
+                });
+              }
+            }}} />
           </Grid>
         </Grid>
       </DialogContent>
