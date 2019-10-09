@@ -1,7 +1,7 @@
 import React from 'react';
 import { storiesOf } from '@storybook/react';
 // import { INightRecord } from '../shared/model';
-import NightView from '../components/NightView';
+import NightView from '../components/NightView/NightView';
 // import { CssBaseline } from '@material-ui/core';
 // import { DateTime } from 'luxon';
 import {sampleWeek, completeNight} from '../shared/sampledata';

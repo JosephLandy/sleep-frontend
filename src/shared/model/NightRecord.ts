@@ -29,7 +29,6 @@ export interface IBaseNightRecord<T_DATE, T_DUR> {
     time?: T_DATE | null;
     quantity?: number;
   }>;
-
   notes: string;
 }
 

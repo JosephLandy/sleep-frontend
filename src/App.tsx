@@ -8,27 +8,33 @@ import theme from './theme';
 import { ThemeProvider } from '@material-ui/styles';
 import WeekNavigator from './components/WeekNavigator';
 import { DateTime } from 'luxon';
+// import AnalyticsView from './components/Analytics/AnalyticsViewD3';
+import AnalyticsController from './components/Analytics/AnalyticsController';
 
 
 const App: React.FC = () => {
-    return (
-        <div className="App">
-            {decorator(() => <WeekNavigator initialDate={DateTime.local()} />)}
-        </div>
-    );
+  return (
+    <div className="App">
+      {decorator(() => {
+        return (
+        <div>
+          <WeekNavigator initialDate={DateTime.local()} />
+          {/* <AnalyticsController /> */}
+        </div>);
+      })}
+    </div>
+  );
 }
 
 export function decorator(contentFn: any) {
-    return (
-        <React.Fragment>
-            <CssBaseline />
-            <ThemeProvider theme={theme}>
-                <MuiPickersUtilsProvider utils={LuxonUtils}>
-                    {contentFn()}
-                </MuiPickersUtilsProvider>
-            </ThemeProvider>
-        </React.Fragment>
-    );
+  return (
+      <ThemeProvider theme={theme}>
+        <CssBaseline />
+        <MuiPickersUtilsProvider utils={LuxonUtils}>
+          {contentFn()}
+        </MuiPickersUtilsProvider>
+      </ThemeProvider>
+  );
 }
 
 export default App;

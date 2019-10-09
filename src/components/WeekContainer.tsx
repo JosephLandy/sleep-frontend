@@ -7,8 +7,6 @@ import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
 import { orange } from '@material-ui/core/colors';
 import NightView from './NightView';
 
-import {cloneDeep} from 'lodash';
-
 type Props = {
   weekOf: DateTime;
 }
@@ -16,6 +14,7 @@ type Props = {
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     root: {
+      marginTop: theme.spacing(4),
       flexGrow: 1,
     },
     left: {
@@ -49,7 +48,7 @@ export default function WeekContainer({weekOf}: Props) {
     loaded: false,
   });
   // get the initial record of the week from the server. 
-  // don't need to get data again unless I switch to a different week
+  // don't really need to get data again unless I switch to a different week
   useEffect(() => {
     const url = `/api/weeks/${weekOf.toISO()}`;
     fetch(url).then(resp => {
@@ -67,7 +66,6 @@ export default function WeekContainer({weekOf}: Props) {
       } else if (resp.status === 404) {
         let w = populateWeek(weekOf);
         setData({
-          // nights: (w.nights as NightRecord[]),
           nights: w.nights,
           loaded: true,
         });
@@ -89,13 +87,8 @@ export default function WeekContainer({weekOf}: Props) {
   }
 
   if (data.loaded) {
-    const week: IWeekRecord = {
-      nights: data.nights,
-      loaded: true,
-      weekOf
-    };
     return (
-      <Grid container justify="space-between" wrap="nowrap" spacing={2} className={classes.root}>
+      <Grid container justify="space-evenly" wrap="wrap" spacing={1} className={classes.root}>
         {data.nights.map(
           (night, index) => <NightView key={index} night={night} nightUpdated={onUpdateNight} />
         )}
@@ -113,9 +106,8 @@ export default function WeekContainer({weekOf}: Props) {
 /**
  * If there are fewer than 7 nights in the passed array, 
  * return a new array in weekday order padding out initial
- * nights with empty ones in order for any weekdays that might 
- * be missing. 
- * @param ns array of nights in week
+ * nights with empty ones in correct order, for any weekdays that might 
+ * be missing.
  */
 function padNights(weekStart: DateTime, nightsInit: INightRecord[]) {
   if (nightsInit.length === 7) {

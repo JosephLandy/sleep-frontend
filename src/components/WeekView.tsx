@@ -4,7 +4,7 @@ import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
 // import { DateTime } from 'luxon';
 
 import {IWeekRecord, INightRecord} from '../shared/model';
-import NightView from './NightView';
+import NightView from './NightView/NightView';
 // I can literally load an svg as a react component.
 //https://create-react-app.dev/docs/adding-images-fonts-and-files
 // import { ReactComponent as Triangle } from '../TriangleArrow-Left.svg';

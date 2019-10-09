@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { Grid, Paper, Box, Fab, Typography, Dialog, Divider, } from '@material-ui/core';
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
-import { INightRecord } from '../shared/model';
+import { INightRecord } from '../../shared/model';
 import AddIcon from '@material-ui/icons/Add';
-import NightEditor from './NightEditor';
+import NightEditor from '../NightEditor';
 // import TextField from '@material-ui/core/TextField';
 import { DateTime } from 'luxon';
 // import { orange } from '@material-ui/core/colors';
@@ -12,13 +12,15 @@ import { DateTime } from 'luxon';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
+    main: {
+      // margin: theme.spacing(2),
+    },
     paper: {
-      width: 200,
+      width: 220,
       // width: 250,
       height: 500,
       padding: theme.spacing(2),
       textAlign: 'left',
-      // textAlign: 'center',
       color: theme.palette.text.secondary,
       display: 'flex',
       flexDirection: "column",
@@ -26,23 +28,28 @@ const useStyles = makeStyles((theme: Theme) =>
     divClickable: {
       width: "100%",
       height: "100%",
-      // backgroundColor: orange[200],
+    },
+    field: {
+      marginBottom: 12,
+    },
+    timefield: {
+      // borderBottom: 1,
+      borderWidth: 4,
+      borderColor: theme.palette.secondary.main,
+      // backgroundColor: theme.palette.secondary.main,
     },
     fieldLabel: {
-      display: 'inline',
-      textDecoration: 'underline',
+      // display: 'inline',
+      // textDecoration: 'underline',
     },
     fieldValue: {
-      display: 'inline',
-      float: "right",
+      // display: 'inline',
+      // float: "right",
     }
   }),
 );
 
-type Props = {
-  night: INightRecord;
-  nightUpdated: (newNight: INightRecord) => void;
-}
+
 
 type TFProps = {
   t?: DateTime;
@@ -51,35 +58,35 @@ type TFProps = {
 export function TimeField({t, l}: TFProps) {
   const classes = useStyles();
   return (
-    <Grid item xs={12}>
-      <Typography className={classes.fieldLabel} variant="body2">{l}</Typography>
-      <Typography className={classes.fieldValue}>
-        {` ${t ? t.toLocaleString(DateTime.TIME_24_SIMPLE) : ''}`}
-      </Typography>
+    // <Grid item xs={12} className={classes.field}>
+      <Grid item xs={12} className={classes.field}>
+      {/* <Box borderBottom={1} borderColor="primary.main"> */}
+        <Box display="flex">
+          <Typography className={classes.fieldLabel} variant="body1">{l}</Typography>
+          <Box flexGrow={1} borderBottom={1} borderColor="primary.main">
+            <Typography className={classes.fieldValue} align="right" variant="body1">
+              {` ${t ? t.toLocaleString(DateTime.TIME_SIMPLE) : ''}`}
+            </Typography>
+          </Box>
+        </Box>
+        {/* <Typography className={classes.fieldLabel} variant="body1">{l}</Typography>
+        <Box display="inline" bgcolor="secondary.main">
+          <Typography className={classes.fieldValue} align="right" variant="body1">
+            {` ${t ? t.toLocaleString(DateTime.TIME_24_SIMPLE) : ''}`}
+          </Typography>
+        </Box> */}
+       
+
+      {/* </Box> */}
+      
     </Grid>
   );
 }
 
-type FProps = {
-  v?: DateTime | string;
-  l: string;
+type Props = {
+  night: INightRecord;
+  nightUpdated: (newNight: INightRecord) => void;
 }
-
-// function isDateTime(v: DateTime | string): v is DateTime {
-//   return DateTime.isDateTime(v);
-// }
-
-// export function Field({v, l}: FProps) {
-//   const classes = useStyles();
-//   return (
-//     <Grid item xs={12}>
-//       <Typography className={classes.fieldLabel} variant="body2">{l}</Typography>
-//       <Typography className={classes.fieldValue}>
-//         {` ${v ? v.toLocaleString(DateTime.TIME_24_SIMPLE) : ''}`}
-//       </Typography>
-//     </Grid>
-//   )
-// }
 
 export default function NightView({ night, nightUpdated }: Props) {
 
@@ -94,9 +101,8 @@ export default function NightView({ night, nightUpdated }: Props) {
     nightUpdated(nightData);
     setOpen(false);
   }
-
   let content;
-
+  
   // I should just break these out into new components this is too much. 
   if (night.edited) {
     // remember: stopPropagation, to keep events from propagating up to parents. 
@@ -105,21 +111,21 @@ export default function NightView({ night, nightUpdated }: Props) {
         e.preventDefault();
         setOpen(true);
       }}>
-        <Grid container >
+        <Grid container>
           <TimeField t={night.bedTime} l="Bedtime:"/>
           <TimeField t={night.fellAsleepAt} l="Fell asleep:"/>
           <TimeField t={night.wokeUp} l="Woke up at:" />
           <TimeField t={night.gotUp} l="Got up:" />
-          <Grid item xs={12}>
-            <Typography className={classes.fieldLabel} variant="body2">
+          <Grid className={classes.field} item xs={12}>
+            <Typography className={classes.fieldLabel} variant="body1">
               Rested rating:
             </Typography>
             <Typography className={classes.fieldValue}>
               {night.restedRating}
             </Typography>
           </Grid>
-          <Grid item xs={12}>
-            <Typography className={classes.fieldLabel} variant="body2">
+          <Grid className={classes.field} item xs={12}>
+            <Typography className={classes.fieldLabel} variant="body1">
               Sleep quality:
             </Typography>
             <Typography className={classes.fieldValue}>
@@ -147,7 +153,7 @@ export default function NightView({ night, nightUpdated }: Props) {
   }
 
   return (
-    <Grid item>
+    <Grid className={classes.main} item>
       <Paper className={classes.paper}>
         <div>
           <Typography variant="h5">

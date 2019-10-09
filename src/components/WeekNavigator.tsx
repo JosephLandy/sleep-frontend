@@ -1,19 +1,21 @@
-import React, {useState} from 'react';
+import React, {useState, ComponentClass} from 'react';
 import { DateTime } from 'luxon';
 
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 
-import { Typography, IconButton } from '@material-ui/core';
+import { Typography, IconButton, TextField, Divider } from '@material-ui/core';
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
 import { DatePicker } from '@material-ui/pickers';
 
 import NavigateBeforeIcon from '@material-ui/icons/NavigateBefore';
 import { green } from '@material-ui/core/colors';
+import clsx from 'clsx';
 
 // import {sampleWeek} from '../shared/sampledata'
 // import WeekView from './WeekView';
 import WeekContainer from './WeekContainer';
+import { TextFieldProps, } from 'material-ui';
 
 type Props = {
   initialDate: DateTime;
@@ -23,10 +25,11 @@ type Props = {
 I need to add an analytics route to the backend thing for the database 
 */
 
+
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     appbar: {
-      backgroundColor: green[400],
+      // backgroundColor: green[400],
     },
     toolbar: {
       // backgroundColor: orange[400],
@@ -40,6 +43,9 @@ const useStyles = makeStyles((theme: Theme) =>
       alignItems: "center",
       margin: "auto",
     },
+    customText: {
+      backgroundColor: green[400],
+    }
   })
 );
 
@@ -98,6 +104,8 @@ export default function WeekNavigator({initialDate}: Props) {
             <DatePicker value={current} onChange={handleDatePicker}
               disableFuture
               labelFunc={datePickerLabel}
+              // color={green.A100}
+              // TextFieldComponent={<CustomizedTextField />}
             />
             {/* <Typography>
               {`Week of ${current.toLocaleString(DateTime.DATE_FULL)}`}

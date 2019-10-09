@@ -53,11 +53,11 @@ export default function NightEditor({ night, closeEditor, submit }: NightEditorP
   const handleTimeChange = (t: DateTime | null, property: string) => {
     if (t) {
       // have to set the time to apply to this night, not the current date. 
-      let corrected = t.day
+      let corrected = night.dateAwake.set({hour: t.hour, minute: t.minute});
       console.log(`set time value ${property} to ${t.toLocaleString(DateTime.DATETIME_HUGE)}`);
       setEdits(oldEdits => ({
         ...oldEdits,
-        [property]: t,
+        [property]: corrected,
       }));
     } else {
       setEdits(oldEdits => ({
