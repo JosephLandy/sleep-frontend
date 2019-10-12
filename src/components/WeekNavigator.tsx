@@ -1,41 +1,26 @@
 import React, {useState, ComponentClass} from 'react';
-import { DateTime } from 'luxon';
-
-import AppBar from '@material-ui/core/AppBar';
-import Toolbar from '@material-ui/core/Toolbar';
-
-import { Typography, IconButton, TextField, Divider } from '@material-ui/core';
+import { Typography, IconButton, TextField, 
+  Divider, Toolbar, AppBar } from '@material-ui/core';
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
 import { DatePicker } from '@material-ui/pickers';
 
 import NavigateBeforeIcon from '@material-ui/icons/NavigateBefore';
 import { green } from '@material-ui/core/colors';
-import clsx from 'clsx';
 
-// import {sampleWeek} from '../shared/sampledata'
-// import WeekView from './WeekView';
 import WeekContainer from './WeekContainer';
-import { TextFieldProps, } from 'material-ui';
+import {startOfWeek, subWeeks, addWeeks, format} from 'date-fns';
 
 type Props = {
-  initialDate: DateTime;
+  initialDate: Date;
 }
-
-/*
-I need to add an analytics route to the backend thing for the database 
-*/
-
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     appbar: {
-      // backgroundColor: green[400],
     },
     toolbar: {
-      // backgroundColor: orange[400],
     },
     rightIcon: {
-      // transform: "rotate(180deg)",
       float: "right",
     },
     navigation: {
@@ -51,30 +36,26 @@ const useStyles = makeStyles((theme: Theme) =>
 
 export default function WeekNavigator({initialDate}: Props) {
   const classes = useStyles();
-  let [current, setCurrent] = useState(initialDate.startOf('week'));
-  // not totally sure why I need both an AppBar and a toolbar, but apparently I do.
+  let [current, setCurrent] = useState(startOfWeek(initialDate));
+
   function back() {
     console.log('back one week');
-    setCurrent(current.minus({weeks: 1}));
+    setCurrent(subWeeks(current, 1));
   }
 
   function next() {
     console.log('next week');
-    const nw = current.plus({weeks: 1});
-    if (nw <= DateTime.local()) {
+    const nw = addWeeks(current, 1);
+    if (nw <= new Date()) {
       setCurrent(nw);
     }
   }
-
-  function datePickerLabel() {
-    return ` ${current.toLocaleString(DateTime.DATE_FULL)}`
-  }
-
-  function handleDatePicker(date: DateTime | null) {
+  
+  function handleDatePicker(date: Date | null) {
     if (date) {
-      const weekStart = date.startOf('week');
+      const weekStart = startOfWeek(date);
       // week start must be less than datetime.local. Otherwise it's too far. 
-      const local = DateTime.local();
+      const local = new Date();
       if (weekStart <= local) {
         setCurrent(weekStart);
       }
@@ -97,24 +78,18 @@ export default function WeekNavigator({initialDate}: Props) {
             <IconButton style={{ float: "left" }} onClick={back}>
               <NavigateBeforeIcon fontSize="large" />
             </IconButton>
-            {/* one of the examples for datepicker shows highlighting selected weeks */}
             <Typography>
               Week of 
             </Typography>
             <DatePicker value={current} onChange={handleDatePicker}
               disableFuture
-              labelFunc={datePickerLabel}
-              // color={green.A100}
-              // TextFieldComponent={<CustomizedTextField />}
+              labelFunc={() => format(current, 'MMMM do, y')}
             />
-            {/* <Typography>
-              {`Week of ${current.toLocaleString(DateTime.DATE_FULL)}`}
-            </Typography> */}
             <IconButton
               edge="end"
               style={{ float: "right" }} 
               onClick={next}
-              disabled={current.plus({weeks: 1}) <= DateTime.local() ? false : true}
+              disabled={addWeeks(current, 1) <= new Date() ? false : true}
             >
               <NavigateBeforeIcon transform="rotate(180)" fontSize="large" />
             </IconButton>
@@ -124,7 +99,7 @@ export default function WeekNavigator({initialDate}: Props) {
       </AppBar>
       {/* this extra toolbar is what all the material ui examples show to prevent
       overlap. Seems really wierd, but ok. I think it's basically just a 
-      div with a few extra css rules.*/}
+      div with a few extra css rules, so not a big deal.*/}
       <Toolbar/> 
       <WeekContainer weekOf={current}/>
     </div>

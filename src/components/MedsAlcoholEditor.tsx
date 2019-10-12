@@ -16,24 +16,15 @@ import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import DeleteIcon from '@material-ui/icons/Delete';
 import AddIcon from '@material-ui/icons/Add';
 
-
-import { DateTime } from 'luxon';
-
 import TimePropertySelector from './TimePropertySelector';
 import { DrugRecord } from '../shared/model';
 
-
-export type MedsAlcoholHandler = (index: number, property: string, value: string | DateTime | number | null) => void;
-
+export type MedsAlcoholHandler = (index: number, property: string, value: string | Date | number | null) => void;
 
 type Props = {
   drugs: Array<DrugRecord>;
-  // drugEdited: MedsAlcoholHandler;
   drugsChanged: (drugs: Array<DrugRecord>) => void;
 }
-
-// this could be a higher order component or something for
-// different list type editors (such as interruptions). Possibly a typescript generic? 
 
 export default function MedsAlcoholEditor({ drugs, drugsChanged, }: Props) {
 
@@ -94,7 +85,7 @@ export default function MedsAlcoholEditor({ drugs, drugsChanged, }: Props) {
                   }} />
                 </TableCell>
                 <TableCell>
-                  <TimePropertySelector value={time} label="Time" property="time" handleChange={(t, property) => {
+                  <TimePropertySelector value={time} property="time" handleChange={(t, property) => {
                     // if time is changed, the med list should be sorted into chronological order.
                     drugEdited(index, property, t);
                   }}/>

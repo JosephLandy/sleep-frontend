@@ -5,8 +5,8 @@ import { INightRecord } from '../../shared/model';
 import AddIcon from '@material-ui/icons/Add';
 import NightEditor from '../NightEditor';
 // import TextField from '@material-ui/core/TextField';
-import { DateTime } from 'luxon';
-// import { orange } from '@material-ui/core/colors';
+import {format} from 'date-fns';
+
 import NightViewFull from './NightViewFull';
 // import MedsAlcoholView from './MedsAlcoholView';
 
@@ -71,10 +71,11 @@ export default function NightView({ night, nightUpdated }: NVProps) {
       <Paper className={classes.paper}>
         <div>
           <Typography variant="h5">
-            {night.dateAwake.weekdayLong}
+            {format(night.dateAwake, 'EEEE')}
           </Typography>
           <Typography>
-            {night.dateAwake.toLocaleString({ month: 'long', day: 'numeric', })}
+            {/* {night.dateAwake.toLocaleDateString({ month: 'long', day: 'numeric', })} */}
+            {format(night.dateAwake, 'MMMM do')}
           </Typography>
         </div>
         <Divider />

@@ -1,27 +1,26 @@
-import { DateTime, Duration } from 'luxon';
+import { populateWeek, INightRecord, NightRecord } from '../shared/model';
+import {hoursToMS} from './model';
+import {subDays, setHours, setMinutes} from 'date-fns';
 
-import { populateWeek, INightRecord } from '../shared/model';
-
-const unixtimestamp = 156002828
-const luxonDate = DateTime.fromMillis(unixtimestamp * 1000);
-export const sampleWeek = populateWeek(luxonDate);
+const timestamp = 156002828 * 1000;
+export const sampleWeek = populateWeek(new Date(timestamp));
 
 const monday = sampleWeek.nights[0];
-export const completeNight: INightRecord = {
+const completeNightOrig: INightRecord = {
   ...monday,
   edited: true,
-  bedTime: monday.dateAwake.set({ hour: 3 }),
+  bedTime: setHours(monday.dateAwake, 3),
   // what day this is on would depend on when they went to bed.
   // what do I put if they didn't sleep for days?
-  fellAsleepAt: monday.dateAwake.set({ hour: 4 }),
+  fellAsleepAt: setHours(monday.dateAwake, 4),
   interuptions: [
     {
-      duration: Duration.fromObject({ hours: 3 }),
+      duration: hoursToMS(3),
       notes: "My sleep was interrupted. It was terrible",
     },
   ],
-  wokeUp: monday.dateAwake.set({ hour: 13 }),
-  gotUp: monday.dateAwake.set({ hour: 13, minute: 35 }),
+  wokeUp: setHours(monday.dateAwake, 13),
+  gotUp: setMinutes(setHours(monday.dateAwake, 13), 35),
   restedRating: "4",
   sleepQuality: "5",
   medsAndAlcohol: [
@@ -29,23 +28,27 @@ export const completeNight: INightRecord = {
     // this ARBITRARY TEST DATA is NOT indicative of my own personal habits and behavior. 
     {
       substance: 'beer',
-      time: monday.dateAwake.minus({ days: 1 }).set({ hour: 22 }),
+      time: setHours(subDays(monday.dateAwake, 1), 22),
       quantity: 5,
     },
     {
       substance: 'melatonin',
-      time: monday.dateAwake.set({ hour: 1 }),
+      time: setHours(monday.dateAwake, 1),
       quantity: 2.5, // 2.5 mg is a reasonable melatonin dose. 
     },
     {
       substance: 'marijuana',
-      time: monday.dateAwake.minus({ days: 1 }).set({ hour: 23 }),
+      time: setHours(subDays(monday.dateAwake, 1), 23),
     },
-  ]
+  ],
+  // notes: "this is some notes about how I slept. \n I'm not really sure how I slept.",
+  // notes: "",
 }
 
-sampleWeek.nights[0] = completeNight;
+// export const completeNight = NightRecord.fromNightRecord(completeNightOrig);
+export const completeNight = completeNightOrig;
 
+sampleWeek.nights[0] = completeNight;
 
 export const priorSubstances = [
   {"name": "marijuana" },

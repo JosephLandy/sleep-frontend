@@ -9,7 +9,7 @@ import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
 
 import { isEqual, cloneDeep } from 'lodash';
 
-import { DateTime, } from 'luxon';
+import {set, format} from 'date-fns';
 
 import RatingSelect from './RatingSelect';
 import TimePropertySelector from './TimePropertySelector';
@@ -50,11 +50,10 @@ export default function NightEditor({ night, closeEditor, submit }: NightEditorP
   const [drugsEdits, setDrugsEdits] = useState([...night.medsAndAlcohol]);
   const classes = useStyles();
 
-  const handleTimeChange = (t: DateTime | null, property: string) => {
+  const handleTimeChange = (t: Date | null, property: string) => {
     if (t) {
       // have to set the time to apply to this night, not the current date. 
-      let corrected = night.dateAwake.set({hour: t.hour, minute: t.minute});
-      console.log(`set time value ${property} to ${t.toLocaleString(DateTime.DATETIME_HUGE)}`);
+      let corrected = set(night.dateAwake, {hours: t.getHours(), minutes: t.getMinutes()});
       setEdits(oldEdits => ({
         ...oldEdits,
         [property]: corrected,
@@ -83,13 +82,14 @@ export default function NightEditor({ night, closeEditor, submit }: NightEditorP
           Edit Night Record
         </Typography>
         <Typography className={classes.heading2} variant="subtitle1">
-          {night.dateAwake.toLocaleString()}
+          {/* {night.dateAwake.toLocaleString()} */}
+          {format(night.dateAwake, 'EEEE, MMMM do, Y')}
         </Typography>
       </DialogTitle>
       <DialogContent dividers>
-        <DialogContentText>
+        {/* <DialogContentText>
           {night.dateAwake.toLocaleString()}
-        </DialogContentText>
+        </DialogContentText> */}
         <Grid container spacing={2} direction="row">
           {/* <Grid container spacing={0} direction="column"> */}
           <Grid item xs={6}>

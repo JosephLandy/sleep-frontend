@@ -1,14 +1,10 @@
 import React, { useState } from 'react';
-import {NVProps} from '.';
 
-
-import { Grid, Paper, Box, Fab, Typography, Dialog, Divider, } from '@material-ui/core';
+import { Grid, Box, Typography,} from '@material-ui/core';
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
 import { INightRecord } from '../../shared/model';
-import AddIcon from '@material-ui/icons/Add';
 import NightEditor from '../NightEditor';
-// import TextField from '@material-ui/core/TextField';
-import { DateTime } from 'luxon';
+import { format } from 'date-fns';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -38,7 +34,7 @@ const useStyles = makeStyles((theme: Theme) =>
 
 
 type TFProps = {
-  t?: DateTime;
+  t?: Date;
   l: string;
 }
 export function TimeField({ t, l }: TFProps) {
@@ -49,7 +45,7 @@ export function TimeField({ t, l }: TFProps) {
         <Typography className={classes.fieldLabel} variant="body1">{l}</Typography>
         <Box flexGrow={1} borderBottom={1} borderColor="primary.main">
           <Typography className={classes.fieldValue} align="right" variant="body1">
-            {` ${t ? t.toLocaleString(DateTime.TIME_SIMPLE) : ''}`}
+            {` ${t ? format(t, 'hh a') : ''}`}
           </Typography>
         </Box>
       </Box>

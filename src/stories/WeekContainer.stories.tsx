@@ -5,6 +5,7 @@ import { decorator } from '../App';
 
 import WeekContainer from '../components/WeekContainer';
 import {sampleWeek} from '../shared/sampledata';
+import {startOfWeek} from 'date-fns';
 
 
 // can't seem to get the new story format to work. I'm going to stick with previous type.
@@ -15,4 +16,4 @@ import {sampleWeek} from '../shared/sampledata';
 // but it seems to basically work very well.  
 // export const sample = () => <WeekContainer initialWeek={sampleWeek.nights[3].dateAwake} />;
 storiesOf('WeekContainer', module).addDecorator(decorator)
-  .add('sampleWeek 1974', () => <WeekContainer weekOf={sampleWeek.nights[3].dateAwake.startOf('week')} />);
+  .add('sampleWeek 1974', () => <WeekContainer weekOf={startOfWeek(sampleWeek.nights[3].dateAwake)} />);
