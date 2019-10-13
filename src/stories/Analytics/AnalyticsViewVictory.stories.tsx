@@ -3,10 +3,12 @@ import { storiesOf } from '@storybook/react';
 
 import AnalyticsView from '../../components/Analytics/AnalyticsViewVictory';
 import { decorator } from '../../App';
-import { DateTime } from 'luxon';
 
-const start = DateTime.local().startOf('week');
-const end = DateTime.local().endOf('week')
+import { startOfWeek, endOfWeek } from 'date-fns';
+
+const start = startOfWeek(new Date())
+const end = endOfWeek(new Date())
+
 const props = {
   start: start,
   end: end,

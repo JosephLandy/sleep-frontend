@@ -2,8 +2,8 @@ import React, {useEffect, useState} from 'react'
 
 import { Select, Button, MenuItem, FormControl, InputLabel, AppBar, Toolbar, Box } from '@material-ui/core';
 import { DatePicker} from '@material-ui/pickers';
-import { DateTime } from 'luxon'
 import AnalyticsViewVictory from './AnalyticsViewVictory';
+import {parseISO, startOfWeek, endOfWeek} from 'date-fns';
 
 interface Props {
 
@@ -22,50 +22,35 @@ const properties = [
   "gotUp",
 ]
 
-// function getAnalytics(start: DateTime, end: DateTime) {
-//   const property = 'wokeUp';
-//   const url = `/api/analytics/${property}?start=${start}&end=${end}`;
-//   fetch(url).then(resp => {
-//     console.log(resp.statusText);
-//     return resp.json();
-//   }).then(json => {
-//     console.dir(json);
-//   }).catch(e => {
-//     console.error(e);
-//   })
-// }
-
-
 function processData<T = string>(raw: object[], property: string) {
   if (raw.length === 0) {
     return raw;
   }
   return raw.map((value: any) => {
-    return {dateAwake: DateTime.fromISO(value.dateAwake), [property]: DateTime.fromISO(value[property])};
+    return {dateAwake: parseISO(value.dateAwake), [property]: parseISO(value[property])};
   })
 
 }
 
 
 export const AnalyticsController: React.FC<Props> = () => {
-  const [start, setStart] = useState(DateTime.local().startOf('week'));
-  const [end, setEnd] = useState(DateTime.local().endOf('week'));
+  const [start, setStart] = useState(startOfWeek(new Date()));
+  const [end, setEnd] = useState(endOfWeek(new Date()));
   // const [data, setData] = useState<DateTime[]>([]);
   // const [data, setData] = useState<Array<{dateAwake: DateTime, yvalue: DateTime}>>([])
-  const [data, setData] = useState<Array<{ x: DateTime, y: DateTime }>>([])
+  const [data, setData] = useState<Array<{ x: Date, y: Date }>>([])
   const [property, setProperty] = useState("");
 
-  function getAnalytics(start: DateTime, end: DateTime, property: string) {
-    // const property = 'wokeUp';
+  function getAnalytics(start: Date, end: Date, property: string) {
+    
     const url = `/api/analytics/${property}?start=${start}&end=${end}`;
     fetch(url).then(resp => {
-      // console.log(resp.statusText);
       return resp.json();
     }).then(json => {
       if (Array.isArray(json)) {
         let d = json.map((val) => {return {
-          x: DateTime.fromISO(val['dateAwake']), 
-          y: DateTime.fromISO(val[property]),
+          x: parseISO(val['dateAwake']), 
+          y: parseISO(val[property]),
         }})
         setData(d);
       }

@@ -1,11 +1,10 @@
 import React, { useEffect, useRef } from 'react'
-import { DateTime } from 'luxon'
 import * as d3 from 'd3';
 
 type Props = {
-  data: DateTime[];
-  start: DateTime;
-  end: DateTime;
+  data: Date[];
+  start: Date;
+  end: Date;
 }
 
 const width = 500;
