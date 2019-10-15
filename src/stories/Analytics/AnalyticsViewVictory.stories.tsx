@@ -15,5 +15,5 @@ const props = {
   data: [],
 }
 
-storiesOf('AnalyticsViewVictory', module)//.addDecorator(decorator)
+storiesOf('AnalyticsViewVictory', module).addDecorator(decorator)
   .add('basic', () => <AnalyticsView {...props} />)

@@ -4,7 +4,6 @@ import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
 import { INightRecord } from '../../shared/model';
 import AddIcon from '@material-ui/icons/Add';
 import NightEditor from '../NightEditor';
-// import TextField from '@material-ui/core/TextField';
 import {format} from 'date-fns';
 
 import NightViewFull from './NightViewFull';
@@ -21,7 +20,8 @@ const useStyles = makeStyles((theme: Theme) =>
       height: 500,
       padding: theme.spacing(2),
       textAlign: 'left',
-      color: theme.palette.text.secondary,
+      // color: theme.palette.text.secondary,
+      // color: theme.palette.text.primary,
       display: 'flex',
       flexDirection: "column",
     },
@@ -34,7 +34,6 @@ export type NVProps = {
 }
 
 export default function NightView({ night, nightUpdated }: NVProps) {
-
   const classes = useStyles();
   const [open, setOpen] = useState(false);
 
@@ -46,6 +45,7 @@ export default function NightView({ night, nightUpdated }: NVProps) {
     nightUpdated(nightData);
     setOpen(false);
   }
+
   let content;
   if (night.edited) {
     content = <NightViewFull night={night} setOpen={setOpen}/>
@@ -58,7 +58,7 @@ export default function NightView({ night, nightUpdated }: NVProps) {
         alignItems="center"
       >
         <div>
-          <Fab onClick={() => { setOpen(true) }}>
+          <Fab color="secondary" onClick={() => { setOpen(true) }}>
             <AddIcon />
           </Fab>
         </div>
@@ -67,22 +67,22 @@ export default function NightView({ night, nightUpdated }: NVProps) {
   }
 
   return (
-    <Grid className={classes.main} item>
+    <Grid item>
       <Paper className={classes.paper}>
         <div>
           <Typography variant="h5">
             {format(night.dateAwake, 'EEEE')}
           </Typography>
           <Typography>
-            {/* {night.dateAwake.toLocaleDateString({ month: 'long', day: 'numeric', })} */}
             {format(night.dateAwake, 'MMMM do')}
           </Typography>
         </div>
-        <Divider />
+        {/* <Divider light={true}/> */}
+        <Divider light={false} />
         {content}
       </Paper>
       
-      <Dialog open={open} onClose={closeEditor} scroll="paper">
+      <Dialog open={open} onClose={closeEditor} scroll="paper" maxWidth="md">
         <NightEditor night={night} closeEditor={closeEditor} submit={submit} />
       </Dialog>
     </Grid>

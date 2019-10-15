@@ -1,5 +1,5 @@
 import React from 'react';
-import { TimePicker } from '@material-ui/pickers';
+import { KeyboardTimePicker } from '@material-ui/pickers';
 
 
 // handleChange should accept undefined. 
@@ -26,20 +26,22 @@ export default function TimePropertySelector({ value, label, property, handleCha
     return (
       // <ThemeProvider theme={theme}>
       // </ThemeProvider>
-      <TimePicker
-        // hiddenLabel={true}
-        value={value ? value : null}
+      <KeyboardTimePicker
+        value={value ? value : null} 
+        // undefined is included in the ParseableDate definition, but if it's undefined,
+        // the picker defaults to showing the current time. Needs to make sure the value
+        // is null.
         id={`${property}-picker`}
         clearable
         label={label}
-        ampm={false}
-        // mask="__:__"
+        // ampm={false}
+        fullWidth
+        mask="__:__ _M"
         // placeholder="8:00 AM"
         onChange={t => {
           handleChange(t, property);
         }}
         {...rest}
       />
-        
     );
 }

@@ -13,5 +13,5 @@ const props={
   data: [new Date()],
 }
 
-storiesOf('AnalyticsViewD3', module)//.addDecorator(decorator)
+storiesOf('AnalyticsViewD3', module).addDecorator(decorator)
   .add('basic', () => <AnalyticsView {...props}/>)

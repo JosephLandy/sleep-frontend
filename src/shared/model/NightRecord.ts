@@ -35,8 +35,6 @@ export type INightRecord = IBaseNightRecord<Date, number>;
 // since they have toJSON.
 export type INightRecordSerial = IBaseNightRecord<string, number>;
 
-
-
 export interface DrugRecord {
   substance: string;
   time?: Date | null;

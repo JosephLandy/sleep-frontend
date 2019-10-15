@@ -10,5 +10,5 @@ const props = {
   
 }
 
-storiesOf('AnalyticsController', module)//.addDecorator(decorator)
+storiesOf('AnalyticsController', module).addDecorator(decorator)
   .add('basic', () => <AnalyticsController {...props} />)

@@ -113,9 +113,7 @@ function padNights(weekStart: Date, nightsInit: INightRecord[]) {
   if (nightsInit.length === 7) {
     return nightsInit;
   }
-
   let out: INightRecord[] = new Array<INightRecord>(7);
-
   for (let i = 0; i < out.length; i++) {
     if (nightsInit.length > 0 && i === getDay(nightsInit[0].dateAwake)) {
       out[i] = (nightsInit.shift() as INightRecord);
@@ -128,7 +126,6 @@ function padNights(weekStart: Date, nightsInit: INightRecord[]) {
 }
 
 function putNight(night: INightRecord) {
-  // console.log(JSON.stringify(night));
   console.log('called putNight');
   fetch('/api/nights', {
     method: 'PUT',

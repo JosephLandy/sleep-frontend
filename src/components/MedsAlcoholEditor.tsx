@@ -19,6 +19,8 @@ import AddIcon from '@material-ui/icons/Add';
 import TimePropertySelector from './TimePropertySelector';
 import { DrugRecord } from '../shared/model';
 
+import {isDate} from 'date-fns';
+
 export type MedsAlcoholHandler = (index: number, property: string, value: string | Date | number | null) => void;
 
 type Props = {
@@ -29,6 +31,7 @@ type Props = {
 export default function MedsAlcoholEditor({ drugs, drugsChanged, }: Props) {
 
   const drugEdited: MedsAlcoholHandler = (i, prop, value) => {
+    
     const newDrugs = [...drugs];
     newDrugs[i] = { ...newDrugs[i], [prop]: value };
     drugsChanged(newDrugs);
@@ -47,10 +50,7 @@ export default function MedsAlcoholEditor({ drugs, drugsChanged, }: Props) {
   }
 
   return (
-    <ExpansionPanel onBlur={(e) => {
-      // maybe submit the update to the containing component when this loses focus.
-      // otherwise I feel like this would be continually re-rendered.
-    }}>
+    <ExpansionPanel>
       <ExpansionPanelSummary
         expandIcon={<ExpandMoreIcon />}>
         Medication and Alcohol
@@ -71,18 +71,18 @@ export default function MedsAlcoholEditor({ drugs, drugsChanged, }: Props) {
                 <TableCell>
                   {/* uncontrolled component. For this to work properly, the submit button
                   on the NightEditor must handle it's event after the onBlur event here. Not sure if it is or not. */}
-                  <TextField defaultValue={substance} inputProps={{onBlur: (event) => {
-                    drugEdited(index, "substance", event.target.value);
-                  }}} />
+                  <TextField defaultValue={substance} 
+                    onBlur={event => {
+                      drugEdited(index, "substance", event.target.value);
+                    }}
+                  />
                 </TableCell>
                 <TableCell>
                   {/* ok, so if there is no value */}
-                  <TextField defaultValue={quantity} inputProps={{
-                    onBlur: (e) => {
-                      // need to make sure this is a number here. And set it to undefined if it's unitless.
+                  <TextField defaultValue={quantity} onBlur={(e) => {
                       drugEdited(index, "quantity", e.target.value);
-                    }
-                  }} />
+                    }} 
+                  />
                 </TableCell>
                 <TableCell>
                   <TimePropertySelector value={time} property="time" handleChange={(t, property) => {

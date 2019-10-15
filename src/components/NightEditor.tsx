@@ -82,14 +82,10 @@ export default function NightEditor({ night, closeEditor, submit }: NightEditorP
           Edit Night Record
         </Typography>
         <Typography className={classes.heading2} variant="subtitle1">
-          {/* {night.dateAwake.toLocaleString()} */}
-          {format(night.dateAwake, 'EEEE, MMMM do, Y')}
+          {format(night.dateAwake, 'EEEE, MMMM do')}
         </Typography>
       </DialogTitle>
       <DialogContent dividers>
-        {/* <DialogContentText>
-          {night.dateAwake.toLocaleString()}
-        </DialogContentText> */}
         <Grid container spacing={2} direction="row">
           {/* <Grid container spacing={0} direction="column"> */}
           <Grid item xs={6}>
@@ -109,7 +105,7 @@ export default function NightEditor({ night, closeEditor, submit }: NightEditorP
               handleChange={handleTimeChange} />
           </Grid>
 
-          <Grid item xs={12} className={classes.containerGrid} container spacing={3} direction="row">
+          <Grid item container xs={12} className={classes.containerGrid} spacing={3} justify="center" direction="row">
             <Grid item className={classes.ratingCell1} xs={4}>
               <RatingSelect value={edits.restedRating}
                 label="Rested rating"
@@ -131,13 +127,13 @@ export default function NightEditor({ night, closeEditor, submit }: NightEditorP
           </Grid>
           <Grid item xs={12}>
             <TextField multiline defaultValue={edits.notes} fullWidth label="Notes" rows={4}
-            inputProps={{onBlur: (e) => {
-              if (e.target.value !== '') {
-                setEdits(oldEdits => {
-                  return {...oldEdits, notes: e.target.value}
-                });
-              }
-            }}} />
+              onBlur={(e) => {
+                if (e.target.value !== '') {
+                  setEdits(oldEdits => {
+                    return { ...oldEdits, notes: e.target.value }
+                  });
+                }
+              }}/>
           </Grid>
         </Grid>
       </DialogContent>

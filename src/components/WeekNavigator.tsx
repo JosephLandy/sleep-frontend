@@ -79,11 +79,11 @@ export default function WeekNavigator({initialDate}: Props) {
               <NavigateBeforeIcon fontSize="large" />
             </IconButton>
             <Typography>
-              Week of 
+              Week of
             </Typography>
             <DatePicker value={current} onChange={handleDatePicker}
               disableFuture
-              labelFunc={() => format(current, 'MMMM do, y')}
+              labelFunc={() => format(current, ' MMMM do, y')}
             />
             <IconButton
               edge="end"
