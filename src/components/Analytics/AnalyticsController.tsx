@@ -2,8 +2,10 @@ import React, {useEffect, useState} from 'react'
 
 import { Select, Button, MenuItem, FormControl, InputLabel, AppBar, Toolbar, Box } from '@material-ui/core';
 import { DatePicker} from '@material-ui/pickers';
-import AnalyticsViewVictory from './AnalyticsViewVictory';
+// import AnalyticsViewVictory from './AnalyticsViewVictory';
+import AnalyticsView from './AnalyticsViewD3';
 import {parseISO, startOfWeek, endOfWeek} from 'date-fns';
+import * as dt from 'date-fns';
 
 interface Props {
 
@@ -34,24 +36,26 @@ function processData<T = string>(raw: object[], property: string) {
 
 
 export const AnalyticsController: React.FC<Props> = () => {
-  const [start, setStart] = useState(startOfWeek(new Date()));
-  const [end, setEnd] = useState(endOfWeek(new Date()));
+  const [start, setStart] = useState(dt.subMonths(startOfWeek(new Date()), 2));
+  const [end, setEnd] = useState(new Date());
   // const [data, setData] = useState<DateTime[]>([]);
   // const [data, setData] = useState<Array<{dateAwake: DateTime, yvalue: DateTime}>>([])
-  const [data, setData] = useState<Array<{ x: Date, y: Date }>>([])
+  const [data, setData] = useState<Array<{ dateAwake: Date, value: Date }>>([])
   const [property, setProperty] = useState("");
 
   function getAnalytics(start: Date, end: Date, property: string) {
-    
-    const url = `/api/analytics/${property}?start=${start}&end=${end}`;
+    const url = `/api/analytics/${property}?start=${start.toISOString()}&end=${end.toISOString()}`;
     fetch(url).then(resp => {
       return resp.json();
     }).then(json => {
+      console.log(json);
       if (Array.isArray(json)) {
-        let d = json.map((val) => {return {
-          x: parseISO(val['dateAwake']), 
-          y: parseISO(val[property]),
-        }})
+        let d = json.map((val) => {
+          return {
+            dateAwake: parseISO(val['dateAwake']), 
+            value: parseISO(val[property]),
+          }
+        });
         setData(d);
       }
     }).catch(e => {
@@ -91,9 +95,8 @@ export const AnalyticsController: React.FC<Props> = () => {
         }}>
           Generate Graph
         </Button>
-
       </Box>
-      <AnalyticsViewVictory data={data} start={start} end={end} />
+      <AnalyticsView data={data} start={start} end={end} />
     </div>
     
   )

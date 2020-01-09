@@ -11,7 +11,7 @@ import {
 } from '@material-ui/core';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 
-import { DateTime } from 'luxon';
+// import { DateTime } from 'luxon';
 
 import { DrugRecord } from '../shared/model';
 
@@ -47,7 +47,7 @@ export default function MedsAlcoholView({ drugs }: Props) {
                 </TableCell> */}
                 <TableCell>{substance}</TableCell>
                 <TableCell>{quantity}</TableCell>
-                <TableCell>{time ? time.toLocaleString(DateTime.TIME_SIMPLE) : ''}</TableCell>
+                {/* <TableCell>{time ? time.toLocaleString(DateTime.TIME_SIMPLE) : ''}</TableCell> */}
               </TableRow>
             ))}
           </TableBody>

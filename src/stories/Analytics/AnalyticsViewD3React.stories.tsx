@@ -18,11 +18,11 @@ const data = [
   { dateAwake: dt.addDays(start, 21), value: new Date(2019, 5, 1, 6) },
 ]
 const end = dt.addDays(start, 25);
-const props={
+const props = {
   start,
   end,
   data,
 }
 
 storiesOf('AnalyticsViewD3', module).addDecorator(decorator)
-  .add('basic', () => <AnalyticsView {...props}/>)
+  .add('basic', () => <AnalyticsView {...props} />)

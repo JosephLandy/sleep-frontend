@@ -44,7 +44,7 @@ export default function InterruptionsEditor({ints, intsChanged}: Props) {
             {ints.map(({duration, notes}: IntRecord, index) => (
               <TableRow key={index}>
                 <TableCell>
-                  <TextField defaultValue={duration.minutes} />
+                  <TextField defaultValue={duration} />
                 </TableCell>
                 <TableCell>
                   <TextField defaultValue={notes} />
